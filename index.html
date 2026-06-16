@@ -1142,14 +1142,14 @@
             setupBasketballGame();
             setupScrollTracker();
             
+            // Cargar siempre la base de datos local / caché primero para que pinte de inmediato
+            loadInitialDatabase();
+            
             // 1. Autenticar con el Cloud Service
             const user = await authenticate();
             if (user) {
-                // 2. Iniciar sincronización en tiempo real desde la nube
+                // 2. Iniciar sincronización en tiempo real desde la nube (esto actualizará la lista con la de la nube cuando conecte)
                 startCloudSync();
-            } else {
-                // Fallback local en caso de error de conexión
-                loadInitialDatabase();
             }
             
             // 3. Cargar RSVP local para desplegar el boleto VIP de inmediato
@@ -1212,12 +1212,28 @@
             });
         }
 
-        // Guardar o actualizar registro de invitado en Firestore en la nube
+        // Guardar o actualizar registro de invitado en Firestore en la nube o Local Fallback
         async function saveRSVPToCloud(rsvpData) {
+            // Actualizar de inmediato la base de datos local en memoria
+            const index = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === rsvpData.email.toLowerCase());
+            if (index !== -1) {
+                rsvpsDatabase[index] = { ...rsvpsDatabase[index], ...rsvpData };
+            } else {
+                rsvpsDatabase.push(rsvpData);
+            }
+            
+            // Persistir en LocalStorage
+            saveDatabase();
+            
+            // Renderizar inmediatamente en el panel del anfitrión para actualización instantánea
+            updateHostPanelStats();
+            renderRosterList();
+
             if (!currentUser) {
-                console.warn("No autenticado. Guardado local de respaldo.");
+                console.warn("No autenticado (Modo offline / Vista previa). Guardado local de respaldo.");
                 return;
             }
+            
             // ID único basado en el correo electrónico para evitar duplicados
             const docId = rsvpData.email.toLowerCase().trim().replace(/[^a-z0-9_+.-]/g, '_');
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rsvps', docId);
@@ -1229,8 +1245,14 @@
             }
         }
 
-        // Eliminar invitado de Firestore en la nube
+        // Eliminar invitado de Firestore en la nube o Local Fallback
         async function deleteRSVPFromCloud(email) {
+            // Eliminar de inmediato de la base de datos local en memoria
+            rsvpsDatabase = rsvpsDatabase.filter(x => x.email.toLowerCase() !== email.toLowerCase());
+            saveDatabase();
+            updateHostPanelStats();
+            renderRosterList();
+
             if (!currentUser) return;
             const docId = email.toLowerCase().trim().replace(/[^a-z0-9_+.-]/g, '_');
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rsvps', docId);
