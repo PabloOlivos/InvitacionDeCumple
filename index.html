@@ -10,7 +10,7 @@
     <title>ÁNGEL 18 - All Star Game Invitation</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium (Enlace corregido) -->
+    <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -574,7 +574,7 @@
                             </div>
                             <h4 class="font-athletic font-black text-base text-white">¡REGISTRO EXITOSO!</h4>
                             <p class="text-[11px] text-slate-300 max-w-xs mx-auto mt-2 leading-relaxed">
-                                Tu pase VIP se ha desbloqueado correctamente. Míralo en la siguiente diapositiva.
+                                Tu pase VIP se ha desbloqueado correctamente y guardado en la nube. Míralo en la siguiente diapositiva.
                             </p>
                             <button onclick="editRSVP()" class="mt-4 text-[10px] text-slate-400 hover:text-white underline font-medium">
                                 Editar mi información
@@ -620,7 +620,7 @@
                         <div class="absolute left-0 top-1/2 -translate-y-1/2 w-4.5 h-8 bg-[#020205] rounded-r-full border-r border-y border-white/10 z-20"></div>
                         <div class="absolute right-0 top-1/2 -translate-y-1/2 w-4.5 h-8 bg-[#020205] rounded-l-full border-l border-y border-white/10 z-20"></div>
 
-                        <!-- Cabecera del Boleto (Diseño Premium) -->
+                        <!-- Cabecera del Boleto -->
                         <div class="bg-gradient-to-r from-court-orange to-amber-500 p-5 text-black flex justify-between items-center">
                             <div>
                                 <span class="font-athletic font-black text-[9px] tracking-widest bg-black text-white px-2 py-0.5 rounded-full">ADMIT ONE</span>
@@ -670,11 +670,11 @@
                             <div class="border-t-2 border-dashed border-white/10 h-[1px]"></div>
                         </div>
 
-                        <!-- Pie del Boleto / QR Dinámico (Diseño y posiciones blindadas contra desbordes) -->
+                        <!-- Pie del Boleto / QR Dinámico (DISEÑO TOTALMENTE CENTRADO Y SIMÉTRICO) -->
                         <div class="p-5 bg-[#080a12] flex flex-col items-center justify-center space-y-3">
-                            <!-- QR Wrapper con tamaño fijo e inamovible para garantizar que nunca se deforme -->
-                            <div class="p-2 bg-white rounded-xl shadow-lg shadow-court-orange/5 flex items-center justify-center w-32 h-32 sm:w-36 sm:h-36 mx-auto overflow-hidden">
-                                <canvas id="ticket-qr" class="block w-full h-full object-contain" style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;"></canvas>
+                            <!-- QR Wrapper: centrado absoluto, alineado mediante flex, con padding limpio y proporcional -->
+                            <div class="p-2.5 bg-white rounded-2xl shadow-lg shadow-court-orange/5 flex items-center justify-center w-36 h-36 mx-auto overflow-hidden">
+                                <canvas id="ticket-qr" class="block w-full h-full aspect-square object-contain"></canvas>
                             </div>
                             <div class="text-center space-y-1">
                                 <span id="ticket-id-label" class="text-[9px] text-slate-500 font-athletic tracking-[0.3em] block">ANGEL-08152026-XXXX</span>
@@ -812,8 +812,6 @@
         </div>
     </div>
 
-    <!-- ================= STREAMING_CHUNK: Creando el Panel Principal de Administración ================= -->
-
     <!-- PANEL DEL ANFITRIÓN (DASHBOARD REAL-TIME + ESCÁNER DE CAMARA) -->
     <div id="host-panel-screen" class="fixed inset-0 z-40 hidden bg-[#05060b] flex flex-col overflow-hidden text-white">
         <!-- Header del panel -->
@@ -942,8 +940,6 @@
         </div>
     </div>
 
-    <!-- ================= STREAMING_CHUNK: Creando el Modal de Estatus del Escaneo QR ================= -->
-
     <!-- MODAL DE ESTATUS DEL ESCANEO (SUCCESS / ERROR DE CHECK-IN) -->
     <div id="scan-result-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-6">
         <div id="scan-result-card" class="w-full max-w-sm rounded-[32px] p-6 text-center border transition-all scale-95 opacity-0 duration-300">
@@ -1000,14 +996,35 @@
     </div>
 
     <!-- ================= STREAMING_CHUNK: Código Lógico JavaScript de la Invitación ================= -->
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'angel-18-allstar';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "dummy-key",
+            authDomain: "dummy.firebaseapp.com",
+            projectId: "dummy-project",
+            storageBucket: "dummy.appspot.com",
+            messagingSenderId: "00000",
+            appId: "dummy-app-id"
+        };
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        let currentUser = null;
+
         // Variables globales de la aplicación
         let localRSVPData = null;
         let countdownInterval;
         let activeSlideIndex = 0;
         const totalSlides = 6;
         
-        // Base de Datos Unificada de Invitados (Simulador Local)
+        // Base de Datos Unificada de Invitados (Tiempo Real + Local Cache Fallback)
         let rsvpsDatabase = [];
         let html5QrCode = null;
         let pinInput = "";
@@ -1093,7 +1110,7 @@
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Tono alto de éxito
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); 
                 gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
                 osc.connect(gain);
@@ -1110,7 +1127,7 @@
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(180, audioCtx.currentTime); // Tono grave de error
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime); 
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
                 osc.connect(gain);
@@ -1120,16 +1137,112 @@
             } catch(e) {}
         }
 
-        // Inicializador general de ventana (Orden de carga corregido para evitar la pérdida de registros)
-        window.onload = function() {
+        window.onload = async function() {
             initCountdown();
-            loadInitialDatabase(); // 1. Primero cargamos la base de datos completa de invitados
-            loadLocalRSVP();       // 2. Segundo, cargamos el RSVP local del navegador actual y sincronizamos
             setupBasketballGame();
             setupScrollTracker();
+            
+            // 1. Autenticar con el Cloud Service
+            const user = await authenticate();
+            if (user) {
+                // 2. Iniciar sincronización en tiempo real desde la nube
+                startCloudSync();
+            } else {
+                // Fallback local en caso de error de conexión
+                loadInitialDatabase();
+            }
+            
+            // 3. Cargar RSVP local para desplegar el boleto VIP de inmediato
+            loadLocalRSVP();
         };
 
-        // Cargar Base de datos local/simulada inicial
+        // Autenticación requerida para usar la base de datos de Firestore en la nube
+        async function authenticate() {
+            try {
+                if (initialAuthToken) {
+                    const credential = await signInWithCustomToken(auth, initialAuthToken);
+                    currentUser = credential.user;
+                } else {
+                    const credential = await signInAnonymously(auth);
+                    currentUser = credential.user;
+                }
+                console.log("Firebase Auth Exitoso:", currentUser.uid);
+                return currentUser;
+            } catch (error) {
+                console.error("Fallo de autenticación en la nube, usando fallback:", error);
+                try {
+                    const credential = await signInAnonymously(auth);
+                    currentUser = credential.user;
+                    return currentUser;
+                } catch (err2) {
+                    console.error("Fallo crítico de autenticación:", err2);
+                    return null;
+                }
+            }
+        }
+
+        // Referencia a la colección en base a las reglas estrictas de rutas de artefactos
+        const rsvpsRef = collection(db, 'artifacts', appId, 'public', 'data', 'rsvps');
+
+        function startCloudSync() {
+            if (!currentUser) return;
+
+            // Escuchar cambios en la colección en tiempo real (Sincronización multi-dispositivo)
+            onSnapshot(rsvpsRef, (snapshot) => {
+                const list = [];
+                snapshot.forEach((doc) => {
+                    list.push({ id: doc.id, ...doc.data() });
+                });
+                rsvpsDatabase = list;
+                
+                // Si el usuario actual ya se registró, actualizar los datos del pase dinámicamente
+                if (localRSVPData) {
+                    const freshData = rsvpsDatabase.find(x => x.email.toLowerCase() === localRSVPData.email.toLowerCase());
+                    if (freshData) {
+                        localRSVPData = freshData;
+                        localStorage.setItem('angel_18_rsvp_v2', JSON.stringify(freshData));
+                        updateTicketUI(freshData);
+                    }
+                }
+                
+                updateHostPanelStats();
+                renderRosterList();
+            }, (error) => {
+                console.error("Error en sincronización en tiempo real:", error);
+            });
+        }
+
+        // Guardar o actualizar registro de invitado en Firestore en la nube
+        async function saveRSVPToCloud(rsvpData) {
+            if (!currentUser) {
+                console.warn("No autenticado. Guardado local de respaldo.");
+                return;
+            }
+            // ID único basado en el correo electrónico para evitar duplicados
+            const docId = rsvpData.email.toLowerCase().trim().replace(/[^a-z0-9_+.-]/g, '_');
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rsvps', docId);
+            try {
+                await setDoc(docRef, rsvpData, { merge: true });
+                console.log("Sincronización en la nube completada para:", rsvpData.email);
+            } catch (e) {
+                console.error("Error al guardar en base de datos de la nube:", e);
+            }
+        }
+
+        // Eliminar invitado de Firestore en la nube
+        async function deleteRSVPFromCloud(email) {
+            if (!currentUser) return;
+            const docId = email.toLowerCase().trim().replace(/[^a-z0-9_+.-]/g, '_');
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rsvps', docId);
+            try {
+                await deleteDoc(docRef);
+                console.log("Eliminado de la base de datos de la nube:", email);
+            } catch (e) {
+                console.error("Error al eliminar de Firestore:", e);
+            }
+        }
+
+        // Cargar base de datos local (Fallback en offline)
         function loadInitialDatabase() {
             const stored = localStorage.getItem('angel18_guests_db_v3');
             if (stored) {
@@ -1140,7 +1253,7 @@
             updateHostPanelStats();
         }
 
-        // Salvar Base de datos local
+        // Salvar base de datos local (Fallback en offline)
         function saveDatabase() {
             localStorage.setItem('angel18_guests_db_v3', JSON.stringify(rsvpsDatabase));
             updateHostPanelStats();
@@ -1287,17 +1400,8 @@
                 try {
                     localRSVPData = JSON.parse(stored);
                     updateTicketUI(localRSVPData);
-                    unlockTicketAndScreen(false); // Desbloqueado sin transiciones en la carga inicial
+                    unlockTicketAndScreen(false); 
                     showRSVPSuccessUI();
-                    
-                    // Sincronizar y forzar la inserción en la base de datos si por algún motivo no estaba registrada
-                    const existingIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === localRSVPData.email.toLowerCase());
-                    if (existingIndex >= 0) {
-                        rsvpsDatabase[existingIndex] = localRSVPData;
-                    } else {
-                        rsvpsDatabase.push(localRSVPData);
-                    }
-                    saveDatabase();
                 } catch(e) {
                     localStorage.removeItem('angel_18_rsvp_v2');
                 }
@@ -1335,21 +1439,15 @@
                 attendance: attendance,
                 guests: guests,
                 message: message,
-                checkIn: false // Inicialmente no ha ingresado al evento
+                checkIn: false 
             };
 
-            // 1. Guardar localmente para el invitado actual
+            // 1. Guardar localmente
             localStorage.setItem('angel_18_rsvp_v2', JSON.stringify(rsvpData));
             localRSVPData = rsvpData;
 
-            // 2. Insertar/Actualizar en la base de datos compartida y salvar inmediatamente
-            const existingIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
-            if (existingIndex >= 0) {
-                rsvpsDatabase[existingIndex] = rsvpData;
-            } else {
-                rsvpsDatabase.push(rsvpData);
-            }
-            saveDatabase();
+            // 2. Guardar en tiempo real en la base de datos de la nube
+            saveRSVPToCloud(rsvpData);
             
             updateTicketUI(rsvpData);
             showRSVPSuccessUI();
@@ -1399,11 +1497,16 @@
                 nameEl.className = "font-athletic font-black text-lg sm:text-xl text-white tracking-tight mt-1 truncate text-left";
                 
                 if (statusEl) {
-                    statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> ACCESO ACTIVO`;
-                    statusEl.className = "font-athletic font-bold text-[9px] text-emerald-400 flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-full self-start";
+                    if (data.checkIn) {
+                        statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> ADMITIDO / DENTRO`;
+                        statusEl.className = "font-athletic font-bold text-[9px] text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 px-2.5 py-1 rounded-full self-start border border-emerald-500/20";
+                    } else {
+                        statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-court-orange inline-block animate-pulse"></span> ACCESO ACTIVO`;
+                        statusEl.className = "font-athletic font-bold text-[9px] text-court-orange flex items-center gap-1.5 bg-court-orange/10 px-2.5 py-1 rounded-full self-start border border-court-orange/20";
+                    }
                 }
 
-                // Algoritmo de distribución de asientos en base a los acompañantes registrados
+                // Distribución de asientos
                 if (companionsCount === 0) {
                     zonaTexto = "VIP - DUELA PREMIUM";
                     asientoTexto = "BUTACA A-18";
@@ -1426,15 +1529,15 @@
                 seatEl.innerText = asientoTexto;
                 companionEl.innerText = badgeTexto;
 
-                // PROTOCOLO PIPELINE COMPACTO (Reduce drásticamente la densidad del QR para escaneos ultra veloces y sin fallos)
+                // PROTOCOLO PIPELINE COMPACTO (Reduce densidad del QR para escaneos veloces)
                 const safeMessage = (data.message || '').replace(/\|/g, ' ').replace(/\n/g, ' ');
                 const qrPayloadCompact = `ANGEL18|${ticketSerial}|${data.name}|${data.email || 'N/A'}|${companionsCount}|${zonaTexto}|${asientoTexto}|${safeMessage}`;
 
-                // Instanciar el QR nítido de alta velocidad de lectura sin bordes internos inútiles
+                // Instanciar el QR nítido (AJUSTADO A 250px PARA RENDERIZADO PERFECTO EN DISPOSITIVOS DE ALTA DENSIDAD)
                 new QRious({
                     element: document.getElementById('ticket-qr'),
                     value: qrPayloadCompact,
-                    size: 200,
+                    size: 250,
                     background: '#ffffff',
                     foreground: '#020205',
                     level: 'M',
@@ -1456,11 +1559,10 @@
 
                 const qrPayloadCancel = `ANGEL18|${ticketSerial}|${data.name}|${data.email || 'N/A'}|0|NINGUNO|SIN ACCESO|BAJA DE EQUIPO / NO ASISTE`;
 
-                // QR en blanco/bloqueado compacto
                 new QRious({
                     element: document.getElementById('ticket-qr'),
                     value: qrPayloadCancel,
-                    size: 200,
+                    size: 250,
                     background: '#0c0e17',
                     foreground: '#3f3f46',
                     level: 'L',
@@ -1489,18 +1591,10 @@
                 checkIn: false
             };
             
-            const existingIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
-            if (existingIndex >= 0) {
-                rsvpsDatabase[existingIndex] = rsvpData;
-            } else {
-                rsvpsDatabase.push(rsvpData);
-            }
-            
-            saveDatabase();
-            renderRosterList();
+            saveRSVPToCloud(rsvpData);
             playScanSuccessSound();
             
-            // Limpiar campos de texto del formulario rápido
+            // Limpiar campos de texto
             document.getElementById('manual-guest-name').value = '';
             document.getElementById('manual-guest-email').value = '';
             document.getElementById('manual-guest-guests').value = '0';
@@ -1511,7 +1605,7 @@
             document.getElementById('rsvp-success').classList.remove('hidden');
         }
 
-        // Función para editar el RSVP
+        // Editar el RSVP
         function editRSVP() {
             const lockOverlay = document.getElementById('ticket-lock-overlay');
             if (lockOverlay) {
@@ -1542,7 +1636,7 @@
 
             html2canvas(container, {
                 backgroundColor: '#0c0e17',
-                scale: 3, // Calidad de alta definición 
+                scale: 3, 
                 useCORS: true,
                 logging: false,
                 borderRadius: 28
@@ -1579,7 +1673,7 @@
                 'PRODID:-//AllStar18//AngelAlejandro//ES',
                 'BEGIN:VEVENT',
                 'UID:' + Date.now() + '@angel18.event',
-                'DTSTART:20260815T230000Z', // Sábado 15 de Agosto 2026 17:00 PM CST (Hora del Centro de México UTC-6)
+                'DTSTART:20260815T230000Z', 
                 'DTEND:20260816T050000Z',
                 'SUMMARY:🏀 ALL-STAR GAME 18 - Ángel Alejandro',
                 'DESCRIPTION:Tu Pase Especial VIP para la gran noche de Ángel Alejandro Villegas. Presenta este evento en la entrada.',
@@ -1619,7 +1713,6 @@
                 playBounceSound();
                 updatePinDots();
                 
-                // Verificar PIN inmediatamente al llegar a 4 dígitos
                 if (pinInput.length === 4) {
                     setTimeout(() => {
                         if (pinInput === correctPIN) {
@@ -1631,7 +1724,7 @@
                             pinInput = "";
                             updatePinDots();
                             
-                            // Efecto visual de vibración de error en los puntos de PIN
+                            // Efecto de vibración de error
                             const dots = document.getElementById('host-pin-modal').querySelector('.flex');
                             dots.classList.add('animate-bounce');
                             setTimeout(() => {
@@ -1700,7 +1793,7 @@
             }
         }
 
-        // Actualizar estadísticas del Dashboard en vivo
+        // Actualizar estadísticas del Dashboard
         function updateHostPanelStats() {
             const totalAssisting = rsvpsDatabase.filter(x => x.attendance === 'yes').length;
             const totalCompanions = rsvpsDatabase.filter(x => x.attendance === 'yes').reduce((sum, x) => sum + (parseInt(x.guests) || 0), 0);
@@ -1712,24 +1805,19 @@
             document.getElementById('roster-badge-count').innerText = rsvpsDatabase.length;
         }
 
-        // Cargar registros de prueba (Demo data) para poder probar el escaneo y lista
+        // Cargar registros de prueba (Demo data)
         function loadDemoRSVPs() {
             const demoList = [
-                { name: "Michael Jordan", email: "mj@bulls.com", attendance: "yes", guests: "2", message: "¡Felices 18 Ángel! Sigue encestando de tres en la vida.", checkIn: false },
-                { name: "Kobe Bryant", email: "mamba@lakers.com", attendance: "yes", guests: "0", message: "Mamba Mentality. Felicidades en tu Draft de la adultez.", checkIn: true },
+                { name: "Michael Jordan", email: "mj@bulls.com", attendance: "yes", guests: "2", message: "¡Felices 18 Ángel! Sigue encestando de tres.", checkIn: false },
+                { name: "Kobe Bryant", email: "mamba@lakers.com", attendance: "yes", guests: "0", message: "Mamba Mentality. Felicidades.", checkIn: true },
                 { name: "LeBron James", email: "theking@cavs.com", attendance: "yes", guests: "4", message: "¡Disfruta mucho esta nueva temporada!", checkIn: false },
                 { name: "Stephen Curry", email: "chef@warriors.com", attendance: "no", guests: "0", message: "Lamento perderme el juego, ¡abrazos!", checkIn: false }
             ];
 
-            // Combinar con los existentes sin duplicar correos
             demoList.forEach(demo => {
-                if (!rsvpsDatabase.some(x => x.email.toLowerCase() === demo.email.toLowerCase())) {
-                    rsvpsDatabase.push(demo);
-                }
+                saveRSVPToCloud(demo);
             });
 
-            saveDatabase();
-            renderRosterList();
             document.getElementById('demo-notice').classList.add('hidden');
         }
 
@@ -1751,7 +1839,6 @@
             }
 
             rsvpsDatabase.forEach((guest, index) => {
-                // Estatus visuales
                 const isConfirmed = guest.attendance === 'yes';
                 const hasCheckedIn = guest.checkIn === true;
 
@@ -1805,31 +1892,34 @@
             });
         }
 
-        // Alternar CheckIn de Invitado desde la lista
+        // Alternar CheckIn de Invitado
         function toggleGuestCheckIn(index) {
             initAudio();
-            rsvpsDatabase[index].checkIn = !rsvpsDatabase[index].checkIn;
-            if (rsvpsDatabase[index].checkIn) {
+            const guest = rsvpsDatabase[index];
+            if (!guest) return;
+
+            guest.checkIn = !guest.checkIn;
+            if (guest.checkIn) {
                 playScanSuccessSound();
             } else {
                 playBounceSound();
             }
-            saveDatabase();
-            renderRosterList();
+            saveRSVPToCloud(guest);
         }
 
         // Eliminar invitado del roster
         function deleteGuestFromRoster(index) {
             initAudio();
+            const guest = rsvpsDatabase[index];
+            if (!guest) return;
+
             playScanErrorSound();
-            rsvpsDatabase.splice(index, 1);
-            saveDatabase();
-            renderRosterList();
+            deleteRSVPFromCloud(guest.email);
         }
 
         // ================= STREAMING_CHUNK: Integrando Escáner de Cámara HTML5-QRCODE =================
 
-        // Iniciar flujo del Escáner QR usando la Cámara Trasera
+        // Iniciar flujo del Escáner QR
         function startScanning() {
             const scannerStatusEl = document.getElementById('scanner-status');
             
@@ -1842,8 +1932,6 @@
             Html5Qrcode.getCameras().then(devices => {
                 if (devices && devices.length > 0) {
                     html5QrCode = new Html5Qrcode("reader");
-                    
-                    // Preferir cámara trasera ('environment') si está disponible
                     const config = { fps: 15, qrbox: { width: 220, height: 220 } };
                     
                     html5QrCode.start(
@@ -1880,7 +1968,7 @@
 
         // ================= STREAMING_CHUNK: Procesando los Resultados de Escaneo =================
 
-        // Callback de éxito del escáner QR (Decodificación nítida del formato pipeline delimitado)
+        // Callback de éxito del escáner QR 
         function onScanSuccessResult(decodedText, decodedResult) {
             initAudio();
             stopScanning();
@@ -1888,7 +1976,7 @@
             try {
                 let qrData;
                 
-                // Intenta decodificar el formato pipeline de alto rendimiento
+                // Formato de pipeline
                 if (decodedText.startsWith('ANGEL18|')) {
                     const parts = decodedText.split('|');
                     qrData = {
@@ -1903,7 +1991,7 @@
                         mensaje: parts[7] || ''
                     };
                 } else {
-                    // Fallback de retrocompatibilidad con formato JSON
+                    // Fallback
                     const parsed = JSON.parse(decodedText);
                     qrData = {
                         id: parsed.id || parsed.serial || 'ANGEL-0815-MANUAL',
@@ -1918,11 +2006,9 @@
                     };
                 }
                 
-                // Buscar si este invitado existe en el roster de la base de datos
                 let matchedGuest = rsvpsDatabase.find(x => x.email.toLowerCase() === qrData.correo.toLowerCase());
                 
                 if (matchedGuest) {
-                    // Sincronizar datos por si hubo algún cambio de último momento en el ticket físico
                     matchedGuest.name = qrData.nombre;
                     matchedGuest.guests = qrData.acompanantes.toString();
                     matchedGuest.message = qrData.mensaje;
@@ -1931,7 +2017,6 @@
                     activeScanResultGuest = matchedGuest;
                     openScanResultModal(matchedGuest, "REGISTRADO");
                 } else {
-                    // Si el invitado no estaba en la base de datos local pero tiene un QR válido, lo registramos dinámicamente
                     const newGuest = {
                         name: qrData.nombre,
                         email: qrData.correo,
@@ -1945,18 +2030,17 @@
                     openScanResultModal(newGuest, "NUEVO_REGISTRO_QR");
                 }
             } catch (e) {
-                // Escaneo inválido o formato incorrecto (Ej. URL de internet ordinaria)
-                console.warn("QR no cumple especificación de formato:", decodedText);
+                console.warn("QR no compatible:", decodedText);
                 playScanErrorSound();
                 showInvalidQRModal(decodedText);
             }
         }
 
         function onScanErrorResult(errorMessage) {
-            // Callback silencioso para evitar sobrecarga de logs
+            // Silencioso
         }
 
-        // Abrir ventana emergente de validación de pase escaneado
+        // Abrir modal de validación del pase
         function openScanResultModal(guest, mode) {
             const modal = document.getElementById('scan-result-modal');
             const card = document.getElementById('scan-result-card');
@@ -1965,13 +2049,11 @@
             const badge = document.getElementById('scan-result-badge');
             const actionBtn = document.getElementById('scan-action-btn');
 
-            // Actualizar campos de texto en el modal
             document.getElementById('scan-result-title').innerText = guest.name.toUpperCase();
             document.getElementById('scan-result-email').innerText = guest.email;
-            document.getElementById('scan-result-id').innerText = guest.tempId || `ANGEL-0815-${Math.abs(guest.name.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)).toString(36).substring(0, 5).toUpperCase()}`;
+            document.getElementById('scan-result-id').innerText = guest.tempId || `ANGEL-0815-N/A`;
             document.getElementById('scan-result-guests').innerText = guest.guests;
             
-            // Asignación de zona idéntica para consistencia
             const cCount = parseInt(guest.guests) || 0;
             const computedZone = guest.attendance === 'yes' ? (cCount === 0 ? "VIP - DUELA PREMIUM" : (cCount <= 2 ? "PREFERENTE PLATINO" : (cCount <= 4 ? "PALCO MEDIA CANCHA" : "SUITE VIP EXECUTIVE"))) : "NINGUNA";
             const computedSeat = guest.attendance === 'yes' ? (cCount === 0 ? "BUTACA A-18" : (cCount <= 2 ? `FILA C - BUTACAS 22-${22 + cCount}` : (cCount <= 4 ? `PALCO FAMILIAR SEC. F` : "SUITE ALL-STAR NUM. 18"))) : "SIN ACCESO";
@@ -1980,9 +2062,7 @@
             document.getElementById('scan-result-seat').innerText = computedSeat;
             document.getElementById('scan-result-message').innerText = guest.message ? `"${guest.message}"` : "Sin mensaje de felicitación.";
 
-            // Configurar diseño de acuerdo a su estado de ingreso previo
             if (guest.checkIn) {
-                // YA INGRESADO (ADVERTENCIA / DUPLICADO)
                 playScanErrorSound();
                 card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-amber-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
                 iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-400 bg-amber-500/10";
@@ -1993,7 +2073,6 @@
                 actionBtn.innerText = "CANCELAR INGRESO";
                 actionBtn.className = "flex-1 bg-amber-500 hover:bg-amber-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all";
             } else if (guest.attendance === 'no') {
-                // PASE INACTIVO / DECLINADO
                 playScanErrorSound();
                 card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-red-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
                 iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-400 bg-red-500/10";
@@ -2004,7 +2083,6 @@
                 actionBtn.innerText = "FORZAR INGRESO";
                 actionBtn.className = "flex-1 bg-red-500 hover:bg-red-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all";
             } else {
-                // PASE VÁLIDO / ÉXITO
                 playScanSuccessSound();
                 card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-emerald-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
                 iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400 bg-emerald-500/10";
@@ -2022,31 +2100,23 @@
         function closeScanResultModal() {
             document.getElementById('scan-result-modal').classList.add('hidden');
             activeScanResultGuest = null;
-            // Reactivar el escaneo automático al cerrar modal de estatus
             startScanning();
         }
 
-        // Alternar el estatus desde el modal del escáner
+        // Alternar CheckIn desde el modal del escáner
         function toggleGuestCheckInFromModal() {
             if (!activeScanResultGuest) return;
 
-            // Buscar en roster existente
-            let localIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === activeScanResultGuest.email.toLowerCase());
-            
-            if (localIndex >= 0) {
-                rsvpsDatabase[localIndex].checkIn = !rsvpsDatabase[localIndex].checkIn;
-            } else {
-                // Si se escaneó un registro válido que no estaba local, lo admitimos agregándolo
-                activeScanResultGuest.checkIn = true;
-                rsvpsDatabase.push(activeScanResultGuest);
+            activeScanResultGuest.checkIn = !activeScanResultGuest.checkIn;
+            if (activeScanResultGuest.checkIn) {
+                playScanSuccessSound();
             }
-
-            saveDatabase();
-            renderRosterList();
+            
+            saveRSVPToCloud(activeScanResultGuest);
             closeScanResultModal();
         }
 
-        // Modal informativo para códigos QR que no siguen la estructura JSON o Pipeline del pase
+        // Modal de QR inválido
         function showInvalidQRModal(rawText) {
             const modal = document.getElementById('scan-result-modal');
             const card = document.getElementById('scan-result-card');
@@ -2116,7 +2186,7 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            // Controladores de eventos del juego coordinados para dispositivos táctiles
+            // Controladores de eventos para escritorio y táctil
             canvas.addEventListener('mousedown', dragStart);
             canvas.addEventListener('mousemove', dragMove);
             canvas.addEventListener('mouseup', dragEnd);
@@ -2228,7 +2298,7 @@
         function updatePhysics() {
             if (!ball.isThrown) return;
             
-            ball.vy += 0.32; // Gravedad suave
+            ball.vy += 0.32; 
             ball.x += ball.vx;
             ball.y += ball.vy;
             
@@ -2239,7 +2309,6 @@
             const rimRight = hoop.x + hoop.width / 2;
             const rimY = hoop.y;
 
-            // Rebote con paredes
             if (ball.x - ball.radius < 0) {
                 ball.x = ball.radius;
                 ball.vx = -ball.vx * 0.55;
@@ -2250,7 +2319,6 @@
                 playBounceSound();
             }
 
-            // Rebote del tablero
             const backboardX = rimRight + 10;
             const backboardTop = hoop.y - 42;
             const backboardBottom = hoop.y + 12;
@@ -2262,7 +2330,6 @@
                 playBounceSound();
             }
 
-            // Rebote con aro izquierdo
             const distToLeftRim = Math.hypot(ball.x - rimLeft, ball.y - rimY);
             if (distToLeftRim < ball.radius + 3) {
                 const angle = Math.atan2(ball.y - rimY, ball.x - rimLeft);
@@ -2271,7 +2338,6 @@
                 playBounceSound();
             }
 
-            // Rebote con aro derecho
             const distToRightRim = Math.hypot(ball.x - rimRight, ball.y - rimY);
             if (distToRightRim < ball.radius + 3) {
                 const angle = Math.atan2(ball.y - rimY, ball.x - rimRight);
@@ -2280,7 +2346,6 @@
                 playBounceSound();
             }
 
-            // Detección de canasta limpia (Swish)
             if (!scoredThisThrow && ball.vy > 0 && 
                 ball.x > rimLeft && ball.x < rimRight && 
                 ball.y - ball.radius <= rimY + 5 && ball.y + ball.radius >= rimY - 5) {
@@ -2297,7 +2362,6 @@
                     localStorage.setItem('angel_hoop_high_v2', gameHighscore);
                 }
 
-                // Efecto de marcador de Apple
                 document.getElementById('game-score').classList.add('scale-125', 'text-amber-400');
                 setTimeout(() => {
                     document.getElementById('game-score').classList.remove('scale-125', 'text-amber-400');
@@ -2342,14 +2406,12 @@
         function drawGame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Dibujar diseño de media cancha
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.arc(canvas.width / 2, hoop.y, canvas.height * 0.45, 0, Math.PI);
             ctx.stroke();
 
-            // Dibujar tablero posterior
             const rimRight = hoop.x + hoop.width / 2;
             const backboardX = rimRight + 10;
             const backboardTop = hoop.y - 42;
@@ -2370,7 +2432,6 @@
             ctx.strokeStyle = '#FF5722';
             ctx.strokeRect(backboardX, hoop.y - 22, hoop.backboardWidth, 16);
 
-            // Dibujar red
             const rimLeft = hoop.x - hoop.width / 2;
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
             ctx.lineWidth = 1.2;
@@ -2393,7 +2454,6 @@
             }
             ctx.stroke();
 
-            // Dibujar aro de baloncesto
             ctx.strokeStyle = '#FF5722';
             ctx.lineWidth = 3.5;
             ctx.beginPath();
@@ -2401,7 +2461,6 @@
             ctx.lineTo(rimRight, hoop.y);
             ctx.stroke();
 
-            // Guía de arrastre para apuntar
             if (ball.isDragging) {
                 ctx.strokeStyle = 'rgba(255, 87, 34, 0.35)';
                 ctx.lineWidth = 2.5;
@@ -2416,7 +2475,6 @@
                 ctx.setLineDash([]);
             }
 
-            // Dibujar el balón
             ctx.save();
             ctx.translate(ball.x, ball.y);
             if (ball.isThrown) {
@@ -2437,7 +2495,6 @@
             ctx.lineWidth = 1.2;
             ctx.stroke();
 
-            // Líneas negras clásicas del balón
             ctx.strokeStyle = '#2E1100';
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -2456,6 +2513,31 @@
 
             ctx.restore();
         }
+
+        window.enterInvitation = enterInvitation;
+        window.scrollToSlide = scrollToSlide;
+        window.handleSplashBallClick = handleSplashBallClick;
+        window.openHostModal = openHostModal;
+        window.closeHostModal = closeHostModal;
+        window.pressPinKey = pressPinKey;
+        window.deleteLastPinKey = deleteLastPinKey;
+        window.switchHostTab = switchHostTab;
+        window.closeHostPanel = closeHostPanel;
+        window.addManualGuest = addManualGuest;
+        window.loadDemoRSVPs = loadDemoRSVPs;
+        window.filterRoster = filterRoster;
+        window.toggleGuestCheckIn = toggleGuestCheckIn;
+        window.deleteGuestFromRoster = deleteGuestFromRoster;
+        window.closeScanResultModal = closeScanResultModal;
+        window.toggleGuestCheckInFromModal = toggleGuestCheckInFromModal;
+        window.playBounceSound = playBounceSound;
+        window.resetGame = resetGame;
+        window.downloadTicketImage = downloadTicketImage;
+        window.downloadCalendarEvent = downloadCalendarEvent;
+        window.editRSVP = editRSVP;
+        window.handleRSVPOubmit = handleRSVPOubmit;
+        window.startScanning = startScanning;
+        window.stopScanning = stopScanning;
     </script>
 </body>
 </html>
