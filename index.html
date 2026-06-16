@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#020205">
     <title>ÁNGEL 18 - All Star Game Invitation</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000471071f897b5d2f3f4dd8e4d%26ts%3D494882%26p%3Dfs%26cid%3D1%26sig%3D77e3c1d0c83569b8e176f77a2aa7c3cbd4296079523041439f7f2d97f8b8c59a%26v%3D0&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;name=Web%20of%20Trust&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004fe471fdb2be8a70903b144a%26ts%3D494882%26p%3Dfs%26cid%3D1%26sig%3Dbd7adcb55cdd19a85ceef7252212d19587860f300347bdb683cb1e75f386d628%26v%3D0&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;name=Web%20of%20Trust&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -1049,6 +1049,8 @@
         let pinInput = "";
         const correctPIN = "1818";
         let activeScanResultGuest = null;
+        let firestoreConnected = false;
+        let rsvpsUnsubscribe = null;
 
         // Configuración de Web Audio API
         let audioCtx = null;
@@ -1161,17 +1163,21 @@
             setupBasketballGame();
             setupScrollTracker();
             
-            // Cargar siempre la base de datos local / caché primero para que pinte de inmediato
-            loadInitialDatabase();
+            // El roster NO se carga desde localStorage: debe venir de Firestore para que sea multi-dispositivo.
+            rsvpsDatabase = [];
+            updateHostPanelStats();
+            renderRosterList();
             
-            // 1. Autenticar con el Cloud Service
+            // 1. Autenticar con Firebase
             const user = await authenticate();
             if (user) {
-                // 2. Iniciar sincronización en tiempo real desde la nube (esto actualizará la lista con la de la nube cuando conecte)
+                // 2. Iniciar sincronización real con Firestore
                 startCloudSync();
+            } else {
+                console.error("No se pudo autenticar con Firebase. Revisa Authentication > Anonymous y las reglas de Firestore.");
             }
             
-            // 3. Cargar RSVP local para desplegar el boleto VIP de inmediato
+            // 3. Cargar únicamente el RSVP del usuario en este dispositivo para mostrar su boleto
             loadLocalRSVP();
         };
 
@@ -1208,20 +1214,29 @@
         const rsvpsRef = collection(db, 'artifacts', appId, 'public', 'data', 'rsvps');
 
         function startCloudSync() {
-            if (!currentUser) return;
+            if (!currentUser) {
+                console.error("No hay usuario autenticado; no se puede escuchar Firestore.");
+                return;
+            }
 
-            // Escuchar cambios en la colección en tiempo real (Sincronización multi-dispositivo)
-            onSnapshot(rsvpsRef, (snapshot) => {
+            if (rsvpsUnsubscribe) {
+                rsvpsUnsubscribe();
+            }
+
+            // Escuchar cambios en Firestore en tiempo real (multi-dispositivo)
+            rsvpsUnsubscribe = onSnapshot(rsvpsRef, (snapshot) => {
+                firestoreConnected = true;
                 const list = [];
-                snapshot.forEach((doc) => {
-                    list.push({ id: doc.id, ...doc.data() });
+                snapshot.forEach((docSnap) => {
+                    list.push({ id: docSnap.id, ...docSnap.data() });
                 });
-                rsvpsDatabase = list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                saveDatabase();
+
+                rsvpsDatabase = list.sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
+                console.log(`Firestore conectado. Registros recibidos: ${rsvpsDatabase.length}`);
                 
                 // Si el usuario actual ya se registró, actualizar los datos del pase dinámicamente
                 if (localRSVPData) {
-                    const freshData = rsvpsDatabase.find(x => x.email.toLowerCase() === localRSVPData.email.toLowerCase());
+                    const freshData = rsvpsDatabase.find(x => (x.email || '').toLowerCase() === localRSVPData.email.toLowerCase());
                     if (freshData) {
                         localRSVPData = freshData;
                         localStorage.setItem('angel_18_rsvp_v2', JSON.stringify(freshData));
@@ -1232,84 +1247,103 @@
                 updateHostPanelStats();
                 renderRosterList();
             }, (error) => {
-                console.error("Error en sincronización en tiempo real:", error);
+                firestoreConnected = false;
+                console.error("Error en sincronización con Firestore. Revisa reglas, Authentication Anonymous y Firestore Database:", error);
             });
         }
 
-        // Guardar o actualizar registro de invitado en Firestore en la nube o Local Fallback
+                // Guardar o actualizar registro de invitado en Firestore en la nube o Local Fallback
         async function saveRSVPToCloud(rsvpData) {
             const now = Date.now();
-            rsvpData.updatedAt = now;
-            rsvpData.createdAt = rsvpData.createdAt || now;
+            const payload = {
+                ...rsvpData,
+                email: (rsvpData.email || '').trim().toLowerCase(),
+                name: (rsvpData.name || '').trim(),
+                guests: String(rsvpData.guests || '0'),
+                attendance: rsvpData.attendance || 'yes',
+                message: rsvpData.message || '',
+                checkIn: rsvpData.checkIn === true,
+                updatedAt: now,
+                createdAt: rsvpData.createdAt || now
+            };
 
-            // Actualizar de inmediato la base de datos local en memoria
-            const index = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === rsvpData.email.toLowerCase());
-            if (index !== -1) {
-                rsvpsDatabase[index] = { ...rsvpsDatabase[index], ...rsvpData };
-            } else {
-                rsvpsDatabase.push(rsvpData);
+            if (!payload.name || !payload.email) {
+                throw new Error("Nombre y correo son obligatorios para guardar en Firestore.");
             }
-            
-            // Persistir en LocalStorage
-            saveDatabase();
-            
-            // Renderizar inmediatamente en el panel del anfitrión para actualización instantánea
-            updateHostPanelStats();
-            renderRosterList();
 
             if (!currentUser) {
-                console.warn("No autenticado (Modo offline / Vista previa). Guardado local de respaldo.");
-                return;
+                await authenticate();
+            }
+
+            if (!currentUser) {
+                throw new Error("No autenticado en Firebase. Activa Authentication > Sign-in method > Anonymous.");
             }
             
-            // ID único basado en el correo electrónico para evitar duplicados
-            const docId = rsvpData.email.toLowerCase().trim().replace(/[^a-z0-9_+.-]/g, '_');
+            // ID único basado en correo electrónico para evitar duplicados
+            const docId = payload.email.replace(/[^a-z0-9_+.-]/g, '_');
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rsvps', docId);
+
             try {
-                await setDoc(docRef, rsvpData, { merge: true });
-                console.log("Sincronización en la nube completada para:", rsvpData.email);
+                await setDoc(docRef, payload, { merge: true });
+                console.log("Guardado real en Firestore:", payload.email);
+
+                // Actualización optimista solo en memoria; la fuente final será onSnapshot(Firestore)
+                const index = rsvpsDatabase.findIndex(x => (x.email || '').toLowerCase() === payload.email);
+                if (index !== -1) {
+                    rsvpsDatabase[index] = { ...rsvpsDatabase[index], ...payload };
+                } else {
+                    rsvpsDatabase.unshift(payload);
+                }
+                updateHostPanelStats();
+                renderRosterList();
+
+                return payload;
             } catch (e) {
-                console.error("Error al guardar en base de datos de la nube:", e);
+                console.error("Firestore rechazó el guardado. No se guardó en la nube:", e);
+                throw e;
             }
         }
 
-        // Eliminar invitado de Firestore en la nube o Local Fallback
+                // Eliminar invitado de Firestore en la nube o Local Fallback
         async function deleteRSVPFromCloud(email) {
-            // Eliminar de inmediato de la base de datos local en memoria
-            rsvpsDatabase = rsvpsDatabase.filter(x => x.email.toLowerCase() !== email.toLowerCase());
-            saveDatabase();
-            updateHostPanelStats();
-            renderRosterList();
+            if (!currentUser) {
+                await authenticate();
+            }
+            if (!currentUser) {
+                console.error("No autenticado en Firebase. No se puede eliminar de Firestore.");
+                return;
+            }
 
-            if (!currentUser) return;
-            const docId = email.toLowerCase().trim().replace(/[^a-z0-9_+.-]/g, '_');
+            const cleanEmail = email.toLowerCase().trim();
+            const docId = cleanEmail.replace(/[^a-z0-9_+.-]/g, '_');
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rsvps', docId);
             try {
                 await deleteDoc(docRef);
-                console.log("Eliminado de la base de datos de la nube:", email);
+                console.log("Eliminado de Firestore:", cleanEmail);
+
+                // Actualización optimista en memoria; onSnapshot confirmará el cambio.
+                rsvpsDatabase = rsvpsDatabase.filter(x => (x.email || '').toLowerCase() !== cleanEmail);
+                updateHostPanelStats();
+                renderRosterList();
             } catch (e) {
                 console.error("Error al eliminar de Firestore:", e);
             }
         }
 
-        // Cargar base de datos local (Fallback en offline)
+                // Cargar base de datos local (Fallback en offline)
         function loadInitialDatabase() {
-            const stored = localStorage.getItem('angel18_guests_db_v3');
-            if (stored) {
-                rsvpsDatabase = JSON.parse(stored);
-            } else {
-                rsvpsDatabase = [];
-            }
+            // Antes se usaba localStorage como base de datos del roster.
+            // Ahora el roster debe venir únicamente de Firestore para que sea visible en tiempo real entre dispositivos.
+            rsvpsDatabase = [];
             updateHostPanelStats();
         }
 
-        // Salvar base de datos local (Fallback en offline)
+        // Mantener esta función solo por compatibilidad interna; ya no persiste el roster en localStorage.
         function saveDatabase() {
-            localStorage.setItem('angel18_guests_db_v3', JSON.stringify(rsvpsDatabase));
             updateHostPanelStats();
         }
 
-        // ================= STREAMING_CHUNK: Lógica de Splash y Navegación =================
+                // ================= STREAMING_CHUNK: Lógica de Splash y Navegación =================
 
         // Tapping secreto en splash ball
         let ballTaps = 0;
@@ -1472,7 +1506,7 @@
             }
         }
 
-        function handleRSVPOubmit(event) {
+        async function handleRSVPOubmit(event) {
             event.preventDefault();
             
             const name = document.getElementById('rsvp-name').value.trim();
@@ -1497,15 +1531,22 @@
                 updatedAt: now
             };
 
-            // 1. Guardar localmente
-            localStorage.setItem('angel_18_rsvp_v2', JSON.stringify(rsvpData));
-            localRSVPData = rsvpData;
+            try {
+                // 1. Guardar primero en Firestore. Si falla, no simulamos éxito local.
+                const savedData = await saveRSVPToCloud(rsvpData);
 
-            // 2. Guardar en tiempo real en la base de datos de la nube
-            saveRSVPToCloud(rsvpData);
-            
-            updateTicketUI(rsvpData);
-            showRSVPSuccessUI();
+                // 2. Guardar solo el boleto del usuario en este dispositivo.
+                localStorage.setItem('angel_18_rsvp_v2', JSON.stringify(savedData));
+                localRSVPData = savedData;
+                
+                updateTicketUI(savedData);
+                showRSVPSuccessUI();
+            } catch (error) {
+                console.error("No se pudo guardar el RSVP en Firebase:", error);
+                playScanErrorSound();
+                alert("No se pudo guardar en Firebase. Revisa que Firestore esté activo, que Anonymous Auth esté habilitado y que las reglas permitan escritura.");
+                return;
+            }
             
             // Celebrar con Confetti Premium
             confetti({
@@ -1627,7 +1668,7 @@
         }
 
         // Agregar invitado manualmente desde el panel del anfitrión
-        function addManualGuest() {
+        async function addManualGuest() {
             const name = document.getElementById('manual-guest-name').value.trim();
             const email = document.getElementById('manual-guest-email').value.trim();
             const guests = document.getElementById('manual-guest-guests').value;
@@ -1649,8 +1690,14 @@
                 updatedAt: now
             };
             
-            saveRSVPToCloud(rsvpData);
-            playScanSuccessSound();
+            try {
+                await saveRSVPToCloud(rsvpData);
+                playScanSuccessSound();
+            } catch (error) {
+                playScanErrorSound();
+                alert("No se pudo guardar el invitado en Firebase. Revisa Firestore/Auth.");
+                return;
+            }
             
             // Limpiar campos de texto
             document.getElementById('manual-guest-name').value = '';
@@ -1864,7 +1911,7 @@
         }
 
         // Cargar registros de prueba (Demo data)
-        function loadDemoRSVPs() {
+        async function loadDemoRSVPs() {
             const demoList = [
                 { name: "Michael Jordan", email: "mj@bulls.com", attendance: "yes", guests: "2", message: "¡Felices 18 Ángel! Sigue encestando de tres.", checkIn: false },
                 { name: "Kobe Bryant", email: "mamba@lakers.com", attendance: "yes", guests: "0", message: "Mamba Mentality. Felicidades.", checkIn: true },
@@ -1872,9 +1919,14 @@
                 { name: "Stephen Curry", email: "chef@warriors.com", attendance: "no", guests: "0", message: "Lamento perderme el juego, ¡abrazos!", checkIn: false }
             ];
 
-            demoList.forEach(demo => {
-                saveRSVPToCloud(demo);
-            });
+            for (const demo of demoList) {
+                try {
+                    await saveRSVPToCloud(demo);
+                } catch (error) {
+                    alert("No se pudieron cargar los registros demo en Firebase.");
+                    return;
+                }
+            }
 
             document.getElementById('demo-notice').classList.add('hidden');
         }
@@ -1951,7 +2003,7 @@
         }
 
         // Alternar CheckIn de Invitado
-        function toggleGuestCheckIn(index) {
+        async function toggleGuestCheckIn(index) {
             initAudio();
             const guest = rsvpsDatabase[index];
             if (!guest) return;
@@ -1962,17 +2014,21 @@
             } else {
                 playBounceSound();
             }
-            saveRSVPToCloud(guest);
+            try {
+                await saveRSVPToCloud(guest);
+            } catch (error) {
+                alert("No se pudo actualizar el check-in en Firebase.");
+            }
         }
 
         // Eliminar invitado del roster
-        function deleteGuestFromRoster(index) {
+        async function deleteGuestFromRoster(index) {
             initAudio();
             const guest = rsvpsDatabase[index];
             if (!guest) return;
 
             playScanErrorSound();
-            deleteRSVPFromCloud(guest.email);
+            await deleteRSVPFromCloud(guest.email);
         }
 
         // ================= STREAMING_CHUNK: Integrando Escáner de Cámara HTML5-QRCODE =================
@@ -2162,7 +2218,7 @@
         }
 
         // Alternar CheckIn desde el modal del escáner
-        function toggleGuestCheckInFromModal() {
+        async function toggleGuestCheckInFromModal() {
             if (!activeScanResultGuest) return;
 
             activeScanResultGuest.checkIn = !activeScanResultGuest.checkIn;
@@ -2170,8 +2226,12 @@
                 playScanSuccessSound();
             }
             
-            saveRSVPToCloud(activeScanResultGuest);
-            closeScanResultModal();
+            try {
+                await saveRSVPToCloud(activeScanResultGuest);
+                closeScanResultModal();
+            } catch (error) {
+                alert("No se pudo registrar la entrada en Firebase.");
+            }
         }
 
         // Modal de QR inválido
