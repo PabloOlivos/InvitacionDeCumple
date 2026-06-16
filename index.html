@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#020205">
     <title>ÁNGEL 18 - All Star Game Invitation</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000008e2871fb9e14f64bfaba546f%26ts%3D494883%26p%3Dfs%26cid%3D1%26sig%3D9a25de56f4294b04c3fc6dab5e7a440c896a4c3c1aa542e1da454306e6ba5b46%26v%3D0&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;name=Web%20of%20Trust&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000ff9071fbbc88bb7c7fb08741%26ts%3D494883%26p%3Dfs%26cid%3D1%26sig%3Dc5648270e7001e8a11f6b1622f336ce24d595ba698a68ab0b89a2e6528b80047%26v%3D0&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;name=Web%20of%20Trust&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -1295,7 +1295,7 @@
             }
         }
 
-                // Eliminar invitado de Firestore en la nube o Local Fallback
+        // Eliminar invitado de Firestore en la nube
         async function deleteRSVPFromCloud(email) {
             if (!currentUser) {
                 await authenticate();
@@ -1924,19 +1924,17 @@
             }
 
             if (sourceList.length === 0) {
-                if (rosterViewFilter === "admitted") {
-                    const header = document.createElement('div');
-                    header.className = "flex justify-between items-center bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 mb-3";
-                    header.innerHTML = `<span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Mostrando admitidos</span><button onclick="clearRosterFilter()" class="text-[10px] text-white bg-white/10 px-2.5 py-1 rounded-lg">Ver todos</button>`;
-                    container.appendChild(header);
-                }
-                const emptyState = document.createElement('div');
-                emptyState.className = "text-center py-10 text-slate-500";
-                emptyState.innerHTML = `
-                    <i class="fa-solid fa-user-check text-3xl mb-3 block"></i>
-                    <p class="text-xs">Todavía no hay invitados admitidos.</p>
+                container.innerHTML = `
+                    ${rosterViewFilter === "admitted" ? `
+                    <div class="flex justify-between items-center bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 mb-3">
+                        <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Mostrando admitidos</span>
+                        <button onclick="clearRosterFilter()" class="text-[10px] text-white bg-white/10 px-2.5 py-1 rounded-lg">Ver todos</button>
+                    </div>` : ``}
+                    <div class="text-center py-10 text-slate-500">
+                        <i class="fa-solid fa-user-check text-3xl mb-3 block"></i>
+                        <p class="text-xs">Todavía no hay invitados admitidos.</p>
+                    </div>
                 `;
-                container.appendChild(emptyState);
                 return;
             }
 
@@ -1966,7 +1964,7 @@
                             <span class="text-[8px] font-bold px-2 py-0.5 rounded-full ${isConfirmed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}">
                                 ${isConfirmed ? 'Sí' : 'No'}
                             </span>
-                            ${hasCheckedIn ? '<span class="text-[8px] font-bold px-2 py-0.5 rounded-full bg-court-orange/10 text-court-orange border border-court-orange/20">Admitido</span>' : ''}
+                            ${hasCheckedIn ? `<span class="text-[8px] font-bold px-2 py-0.5 rounded-full bg-court-orange/10 text-court-orange border border-court-orange/20">Admitido</span>` : ``}
                         </div>
                         <p class="text-[10px] text-slate-400 truncate text-left">${guest.email}</p>
                         <p class="text-[9px] text-slate-500 mt-1 text-left">
@@ -1974,9 +1972,11 @@
                         </p>
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
+                        <!-- Check In Toggle -->
                         <button onclick="toggleGuestCheckIn(${index})" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all ${hasCheckedIn ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10'}" title="${hasCheckedIn ? 'Admitido' : 'Marcar Ingreso'}">
                             <i class="fa-solid fa-check text-sm"></i>
                         </button>
+                        <!-- Eliminar registro -->
                         <button onclick="deleteGuestFromRoster(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-all" title="Eliminar Registro">
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
