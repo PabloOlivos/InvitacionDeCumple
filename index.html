@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#020205">
     <title>ÁNGEL 18 - All Star Game Invitation</title>
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000471071f897b5d2f3f4dd8e4d%26ts%3D494882%26p%3Dfs%26cid%3D1%26sig%3D77e3c1d0c83569b8e176f77a2aa7c3cbd4296079523041439f7f2d97f8b8c59a%26v%3D0&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;name=Web%20of%20Trust&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -1000,23 +1000,42 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'angel-18-allstar';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "dummy-key",
-            authDomain: "dummy.firebaseapp.com",
-            projectId: "dummy-project",
-            storageBucket: "dummy.appspot.com",
-            messagingSenderId: "00000",
-            appId: "dummy-app-id"
+        // ================= CONFIGURACIÓN FIREBASE PRODUCCIÓN =================
+        // Proyecto Firebase: hbdangel-1e37a
+        const appId = 'hbdangel-1e37a';
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOaXUMD-_Ma446umlU98vMf3zi8ESGfZo",
+            authDomain: "hbdangel-1e37a.firebaseapp.com",
+            projectId: "hbdangel-1e37a",
+            storageBucket: "hbdangel-1e37a.firebasestorage.app",
+            messagingSenderId: "888224627086",
+            appId: "1:888224627086:web:36954e796788cd95ad0cdf",
+            measurementId: "G-WQGYW6HK7Y"
         };
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const initialAuthToken = null;
 
         // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        let analytics = null;
+        isAnalyticsSupported().then((supported) => {
+            if (supported) {
+                analytics = getAnalytics(app);
+            }
+        }).catch((error) => {
+            console.warn("Analytics no disponible en este navegador:", error);
+        });
         let currentUser = null;
+
+        function isFirebaseConfigured() {
+            return firebaseConfig.apiKey &&
+                   !firebaseConfig.apiKey.startsWith('TU_') &&
+                   firebaseConfig.projectId &&
+                   !firebaseConfig.projectId.startsWith('TU_');
+        }
 
         // Variables globales de la aplicación
         let localRSVPData = null;
@@ -1158,6 +1177,10 @@
 
         // Autenticación requerida para usar la base de datos de Firestore en la nube
         async function authenticate() {
+            if (!isFirebaseConfigured()) {
+                console.warn("Firebase no está configurado. El formulario funcionará solo en este dispositivo con localStorage.");
+                return null;
+            }
             try {
                 if (initialAuthToken) {
                     const credential = await signInWithCustomToken(auth, initialAuthToken);
@@ -1193,7 +1216,8 @@
                 snapshot.forEach((doc) => {
                     list.push({ id: doc.id, ...doc.data() });
                 });
-                rsvpsDatabase = list;
+                rsvpsDatabase = list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                saveDatabase();
                 
                 // Si el usuario actual ya se registró, actualizar los datos del pase dinámicamente
                 if (localRSVPData) {
@@ -1214,6 +1238,10 @@
 
         // Guardar o actualizar registro de invitado en Firestore en la nube o Local Fallback
         async function saveRSVPToCloud(rsvpData) {
+            const now = Date.now();
+            rsvpData.updatedAt = now;
+            rsvpData.createdAt = rsvpData.createdAt || now;
+
             // Actualizar de inmediato la base de datos local en memoria
             const index = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === rsvpData.email.toLowerCase());
             if (index !== -1) {
@@ -1455,13 +1483,18 @@
             
             if (!name || !email) return;
 
+            const existingGuest = rsvpsDatabase.find(x => x.email.toLowerCase() === email.toLowerCase());
+            const now = Date.now();
+
             const rsvpData = {
                 name: name,
                 email: email,
                 attendance: attendance,
                 guests: guests,
                 message: message,
-                checkIn: false 
+                checkIn: existingGuest ? existingGuest.checkIn === true : false,
+                createdAt: existingGuest?.createdAt || now,
+                updatedAt: now
             };
 
             // 1. Guardar localmente
@@ -1604,13 +1637,16 @@
                 return;
             }
             
+            const now = Date.now();
             const rsvpData = {
                 name: name,
                 email: email,
                 attendance: 'yes',
                 guests: guests,
                 message: 'Agregado manualmente por el anfitrión.',
-                checkIn: false
+                checkIn: false,
+                createdAt: now,
+                updatedAt: now
             };
             
             saveRSVPToCloud(rsvpData);
