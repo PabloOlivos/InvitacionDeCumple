@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#020205]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- iOS Web App meta tags para experiencia de pantalla completa real -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#020205">
+    <title>ÁNGEL 18 - All Star Game Invitation</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium -->
+am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Html2Canvas para exportar el pase a imágenes reales offline -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Canvas Confetti para celebración premium -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- QRious QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <!-- HTML5-QRCODE para escaneo de cámara web nativo en el mismo archivo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    
+    <!-- Configuración del tema extendido de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        court: {
+                            orange: '#FF5722',
+                            'orange-dark': '#D84315',
+                            dark: '#020205',
+                            card: 'rgba(18, 22, 35, 0.65)',
+                            wood: '#C19A6B',
+                            apple: {
+                                darkGray: '#1C1C1E',
+                                black: '#000000',
+                                dynamicGray: '#2C2C2E'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        athletic: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            background-color: #020205;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Ajustes de áreas seguras para dispositivos con Notch / Isla Dinámica de Apple y Android */
+        .safe-top-pt {
+            padding-top: calc(5rem + env(safe-area-inset-top)) !important;
+        }
+        .safe-bottom-pb {
+            padding-bottom: calc(1.75rem + env(safe-area-inset-bottom)) !important;
+        }
+        
+        /* Efectos de Brillo estilo Apple Neon Mesh Gradients aplicados en pantalla completa */
+        .apple-gradient-1 {
+            background: radial-gradient(circle at 80% 20%, rgba(255, 87, 34, 0.16) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 80%, rgba(15, 23, 42, 0.8) 0%, transparent 50%),
+                        linear-gradient(180deg, #090B11 0%, #020205 100%);
+        }
+        
+        .apple-gradient-2 {
+            background: radial-gradient(circle at 20% 30%, rgba(245, 158, 11, 0.14) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(251, 146, 60, 0.11) 0%, transparent 45%),
+                        linear-gradient(180deg, #020205 0%, #090B11 100%);
+        }
+
+        .apple-gradient-3 {
+            background: radial-gradient(circle at 50% 50%, rgba(255, 87, 34, 0.12) 0%, transparent 60%),
+                        linear-gradient(180deg, #090B11 0%, #020205 100%);
+        }
+
+        /* Ocultar barra de scroll pero mantener funcionalidad de snap vertical */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Glassmorphism de Apple */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .glass-card-orange {
+            background: rgba(255, 87, 34, 0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 87, 34, 0.15);
+        }
+
+        /* Transiciones de sección tipo Slide */
+        .snap-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100%;
+        }
+        
+        .snap-section {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            height: 100%;
+            position: relative;
+            background-color: transparent !important;
+        }
+
+        /* Animación de rotación suave */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(4deg); }
+        }
+        .floating-ball {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        /* Indicador de deslizar animado */
+        @keyframes bounce-down {
+            0%, 100% { transform: translateY(0); opacity: 0.4; }
+            50% { transform: translateY(6px); opacity: 0.9; }
+        }
+        .bounce-arrow {
+            animation: bounce-down 1.8s infinite;
+        }
+
+        /* Indicadores laterales de puntos estilo Apple slider */
+        .dot-indicator {
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .dot-indicator.active {
+            height: 24px;
+            background-color: #FF5722;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= STREAMING_CHUNK: Configurando dependencias y capas de fondo ================= -->
+    
+    <!-- CAPA 1 (z-0): Capas de Gradiente Dinámicas (Base de color estilo Apple) -->
+    <div id="dynamic-bg-glow" class="fixed inset-0 z-0 transition-all duration-1000 ease-in-out apple-gradient-1"></div>
+
+    <!-- CAPA 2 (z-10): Imagen de Fondo Real Premium (Estadio/Cancha con iluminación nítida y difuminada) -->
+    <div class="fixed inset-0 z-10 pointer-events-none opacity-[0.12] mix-blend-screen">
+        <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80" 
+             alt="Basketball Court Night Ambient" 
+             class="w-full h-full object-cover filter contrast-125 brightness-75 blur-[5px]"
+             onerror="this.src='https://images.unsplash.com/photo-1519766304817-4f37bda74a27?auto=format&fit=crop&w=800&q=80'">
+    </div>
+
+    <!-- CAPA 3 (z-20): Líneas de Cancha / Croquis Táctico de Básquetbol -->
+    <div class="fixed inset-0 z-20 pointer-events-none opacity-[0.14] mix-blend-screen">
+        <svg width="100%" height="100%" viewBox="0 0 400 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Línea exterior de juego -->
+            <rect x="15" y="15" width="370" height="770" fill="none" stroke="#FF5722" stroke-width="2" stroke-dasharray="8 4" />
+            
+            <!-- Círculo central -->
+            <circle cx="200" cy="400" r="60" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            <circle cx="200" cy="400" r="15" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            <line x1="15" y1="400" x2="385" y2="400" stroke="#ffffff" stroke-width="1.5" />
+
+            <!-- Canasta Superior -->
+            <path d="M 15 140 A 185 185 0 0 0 385 140" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            <rect x="140" y="15" width="120" height="110" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            <circle cx="200" cy="125" r="35" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            <line x1="170" y1="45" x2="230" y2="45" stroke="#FF5722" stroke-width="3" />
+
+            <!-- Canasta Inferior -->
+            <path d="M 15 660 A 185 185 0 0 1 385 660" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            <rect x="140" y="675" width="120" height="110" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            <circle cx="200" cy="675" r="35" fill="none" stroke="#ffffff" stroke-width="1.5" />
+            <line x1="170" y1="755" x2="230" y2="755" stroke="#FF5722" stroke-width="3" />
+        </svg>
+    </div>
+
+    <!-- CAPA 4 (z-30): Patrón de Duela de Madera (Embozado sutil en el fondo) -->
+    <div class="fixed inset-0 z-30 pointer-events-none opacity-[0.06] mix-blend-overlay">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="wood-planks" width="80" height="24" patternUnits="userSpaceOnUse">
+                    <rect width="80" height="24" fill="none" stroke="#ffffff" stroke-width="0.5"/>
+                    <line x1="0" y1="12" x2="80" y2="12" stroke="#ffffff" stroke-width="0.5" />
+                    <line x1="40" y1="0" x2="40" y2="12" stroke="#ffffff" stroke-width="0.5" />
+                    <line x1="20" y1="12" x2="20" y2="24" stroke="#ffffff" stroke-width="0.5" />
+                    <line x1="60" y1="12" x2="60" y2="24" stroke="#ffffff" stroke-width="0.5" />
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#wood-planks)" />
+        </svg>
+    </div>
+
+    <!-- ================= STREAMING_CHUNK: Creando el Splash Screen Inicial ================= -->
+
+    <!-- Pantalla de Splash / Carga Inicial interactiva -->
+    <div id="splash-screen" class="fixed inset-0 bg-[#020205]/95 z-50 flex flex-col justify-between p-8 pt-[calc(2rem+env(safe-area-inset-top))] pb-[calc(2.5rem+env(safe-area-inset-bottom))] transition-all duration-700 ease-in-out">
+        <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between">
+            <div class="flex justify-between items-center mt-6">
+                <span class="font-athletic font-extrabold text-[10px] tracking-[0.2em] text-court-orange">DRAFT CLASS 2026</span>
+                <span class="font-athletic font-extrabold text-[10px] tracking-[0.2em] text-slate-400">18 SEASONS</span>
+            </div>
+            
+            <div class="flex flex-col items-center justify-center my-auto">
+                <!-- Balón de básquetbol flotando estilo Apple Premium Glow -->
+                <div class="w-44 h-44 bg-gradient-to-br from-court-orange to-court-orange-dark rounded-full flex items-center justify-center relative shadow-2xl shadow-court-orange/40 floating-ball mb-10 cursor-pointer" onclick="handleSplashBallClick()">
+                    <!-- Textura del Balón (Líneas minimalistas) -->
+                    <svg class="absolute w-full h-full text-black/95 p-1" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="50" cy="50" r="47" />
+                        <path d="M15,50 Q50,20 85,50" />
+                        <path d="M15,50 Q50,80 85,50" />
+                        <line x1="50" y1="3" x2="50" y2="97" />
+                        <line x1="3" y1="50" x2="97" y2="50" />
+                    </svg>
+                    <span class="font-athletic font-black text-6xl text-black select-none tracking-tighter">18</span>
+                </div>
+                
+                <h1 class="font-athletic font-black text-4xl text-center tracking-tighter leading-none mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
+                    ANGEL ALEJANDRO
+                </h1>
+                <p class="font-athletic text-[13px] text-court-orange tracking-[0.25em] font-bold text-center uppercase mb-6">
+                    ALL-STAR BIRTHDAY
+                </p>
+                <div class="h-[1.5px] w-16 bg-gradient-to-r from-transparent via-court-orange to-transparent mb-6"></div>
+                <p class="text-center text-slate-400 text-xs max-w-xs leading-relaxed">
+                    Estás seleccionado en la primera ronda del Draft de la temporada. Prepárate para el juego del año.
+                </p>
+            </div>
+
+            <div class="w-full pb-6 z-10">
+                <button onclick="enterInvitation()" class="w-full bg-white hover:bg-slate-100 text-black font-athletic font-extrabold py-4 px-6 rounded-2xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 text-center flex items-center justify-center gap-2">
+                    REVELAR INVITACIÓN <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+                <p class="text-center text-[9px] text-slate-500 mt-3 font-medium tracking-widest uppercase">15 DE AGOSTO, 2026 • SALÓN PARTENÓN</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= STREAMING_CHUNK: Creando el Menú de Navegación Lateral y Header ================= -->
+
+    <!-- Menú de Puntos de Navegación Lateral (Estilo Slider de Apple) -->
+    <div id="side-nav" class="fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden flex-col gap-3 items-center py-4 px-1.5 rounded-full bg-white/5 border border-white/5 backdrop-blur-md">
+        <button onclick="scrollToSlide(0)" class="dot-indicator w-2 h-2 rounded-full bg-white/30 active" data-index="0" title="Portada"></button>
+        <button onclick="scrollToSlide(1)" class="dot-indicator w-2 h-2 rounded-full bg-white/30" data-index="1" title="Cronograma"></button>
+        <button onclick="scrollToSlide(2)" class="dot-indicator w-2 h-2 rounded-full bg-white/30" data-index="2" title="Ubicación"></button>
+        <button onclick="scrollToSlide(3)" class="dot-indicator w-2 h-2 rounded-full bg-white/30" data-index="3" title="Confirmación"></button>
+        <button onclick="scrollToSlide(4)" class="dot-indicator w-2 h-2 rounded-full bg-white/30" data-index="4" title="Pase VIP"></button>
+        <button onclick="scrollToSlide(5)" class="dot-indicator w-2 h-2 rounded-full bg-white/30" data-index="5" title="Dunk Challenge"></button>
+    </div>
+
+    <!-- Header superior fijo -->
+    <header id="app-header" class="hidden fixed top-0 left-0 right-0 bg-[#020205]/40 backdrop-blur-md z-40 px-6 pt-[calc(1.2rem+env(safe-area-inset-top))] pb-4 justify-between items-center border-b border-white/5">
+        <div class="max-w-md mx-auto w-full flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-court-orange to-amber-500 flex items-center justify-center text-black font-athletic font-black text-xs">
+                    18
+                </div>
+                <div>
+                    <h2 class="font-athletic font-black text-[11px] tracking-wide text-white leading-none text-left">ÁNGEL ALEJANDRO</h2>
+                    <p class="text-[8px] text-court-orange tracking-widest font-extrabold uppercase mt-0.5 text-left">All-Star Game</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <span id="current-slide-badge" class="font-athletic text-[9px] font-black bg-white/10 text-slate-300 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    Temporada 18
+                </span>
+                <!-- BOTÓN OCULTO PARA ACCEDER AL MODO ANFITRIÓN -->
+                <button onclick="openHostModal()" class="w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/15 active:scale-90 transition-all" title="Acceso Anfitrión">
+                    <i class="fa-solid fa-lock text-slate-400 text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= STREAMING_CHUNK: Diseñando las Diapositivas Principales (Slide 1, 2 y 3) ================= -->
+
+    <!-- Contenedor del Deck de Diapositivas con Snap Scroll -->
+    <div id="main-content" class="hidden snap-container no-scrollbar flex-1 relative z-30">
+        
+        <!-- DIAPOSITIVA 1: PORTADA & CRONÓMETRO -->
+        <section class="snap-section flex flex-col justify-between safe-top-pt safe-bottom-pb px-6 overflow-hidden">
+            <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between">
+                <div class="absolute top-1/4 -right-12 w-48 h-48 bg-court-orange/5 rounded-full blur-[80px] pointer-events-none"></div>
+                
+                <div class="text-center my-auto space-y-4">
+                    <span class="inline-block bg-white/5 border border-white/10 text-white font-athletic text-[9px] font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full">
+                        SEASON KICK-OFF
+                    </span>
+                    <h1 class="font-athletic font-black text-5xl tracking-tight leading-none text-white">
+                        SEASON <span class="text-court-orange bg-clip-text text-transparent bg-gradient-to-r from-court-orange to-amber-500">18</span>
+                    </h1>
+                    <p class="font-athletic font-extrabold tracking-[0.15em] text-slate-400 text-[11px] uppercase">
+                        Ángel Alejandro Villegas Enríquez
+                    </p>
+                    <p class="text-xs text-slate-300 max-w-[280px] mx-auto font-light leading-relaxed">
+                        Te invitamos a celebrar el pase de Ángel a las ligas mayores de la vida adulta. El cronómetro está corriendo para el salto inicial.
+                    </p>
+                </div>
+
+                <!-- Cronómetro de estilo premium de Apple -->
+                <div class="w-full mt-auto">
+                    <h3 class="font-athletic text-[9px] font-extrabold tracking-[0.25em] text-center text-slate-400 mb-3 uppercase">TIEMPO PARA EL TIP-OFF</h3>
+                    <div class="grid grid-cols-4 gap-2.5 text-center">
+                        <div class="glass-card rounded-2xl py-3 border border-white/5">
+                            <span id="countdown-days" class="font-athletic font-black text-2xl text-court-orange block leading-none mb-0.5">00</span>
+                            <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Días</span>
+                        </div>
+                        <div class="glass-card rounded-2xl py-3 border border-white/5">
+                            <span id="countdown-hours" class="font-athletic font-black text-2xl text-court-orange block leading-none mb-0.5">00</span>
+                            <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Horas</span>
+                        </div>
+                        <div class="glass-card rounded-2xl py-3 border border-white/5">
+                            <span id="countdown-mins" class="font-athletic font-black text-2xl text-court-orange block leading-none mb-0.5">00</span>
+                            <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Mins</span>
+                        </div>
+                        <div class="glass-card rounded-2xl py-3 border border-white/5">
+                            <span id="countdown-secs" class="font-athletic font-black text-2xl text-white block leading-none mb-0.5">00</span>
+                            <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Segs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicador de desplazamiento hacia abajo -->
+                <div class="flex flex-col items-center mt-6 cursor-pointer" onclick="scrollToSlide(1)">
+                    <span class="text-[9px] text-slate-400 tracking-[0.3em] uppercase font-bold">VER CRONOGRAMA</span>
+                    <i class="fa-solid fa-chevron-down text-court-orange text-xs mt-1.5 bounce-arrow"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 2: CRONOGRAMA DEL PARTIDO -->
+        <section class="snap-section flex flex-col justify-between safe-top-pt safe-bottom-pb px-6">
+            <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between">
+                <div class="text-center mb-4">
+                    <h3 class="font-athletic font-black text-xl text-white">CRONOGRAMA DEL PARTIDO</h3>
+                    <p class="text-xs text-slate-400">Las etapas de la gran noche del Draft</p>
+                </div>
+
+                <!-- Línea de tiempo de eventos real y estilizada -->
+                <div class="my-auto space-y-3.5 w-full">
+                    <!-- Tiempo 1: Entrada -->
+                    <div class="flex gap-4 items-start relative pb-1">
+                        <div class="flex flex-col items-center flex-shrink-0">
+                            <div class="w-7 h-7 rounded-full bg-court-orange/25 border border-court-orange text-court-orange flex items-center justify-center text-xs font-bold font-athletic">1</div>
+                            <div class="w-0.5 h-10 bg-gradient-to-b from-court-orange/50 to-transparent"></div>
+                        </div>
+                        <div class="glass-card p-3 rounded-2xl flex-1 border border-white/5">
+                            <span class="text-[8px] text-court-orange font-bold font-athletic tracking-widest block">1ER CUARTO • 17:00 PM</span>
+                            <h4 class="font-bold text-xs text-white mt-0.5">EL TIP-OFF (Entrada)</h4>
+                            <p class="text-[11px] text-slate-400 mt-1">Calentamiento de invitados, registro en la duela y alfombra naranja.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tiempo 2: Comida -->
+                    <div class="flex gap-4 items-start relative pb-1">
+                        <div class="flex flex-col items-center flex-shrink-0">
+                            <div class="w-7 h-7 rounded-full bg-court-orange/25 border border-court-orange text-court-orange flex items-center justify-center text-xs font-bold font-athletic">2</div>
+                            <div class="w-0.5 h-10 bg-gradient-to-b from-court-orange/50 to-transparent"></div>
+                        </div>
+                        <div class="glass-card p-3 rounded-2xl flex-1 border border-white/5">
+                            <span class="text-[8px] text-court-orange font-bold font-athletic tracking-widest block">2DO CUARTO • 18:00 PM - 19:00 PM</span>
+                            <h4 class="font-bold text-xs text-white mt-0.5">EL BANQUETE DE CAMPEONES (Comida)</h4>
+                            <p class="text-[11px] text-slate-400 mt-1">Recarga de energía con nuestra comida de roster All-Star.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tiempo 3: Banda de Rock -->
+                    <div class="flex gap-4 items-start relative pb-1">
+                        <div class="flex flex-col items-center flex-shrink-0">
+                            <div class="w-7 h-7 rounded-full bg-court-orange/25 border border-court-orange text-court-orange flex items-center justify-center text-xs font-bold font-athletic">3</div>
+                            <div class="w-0.5 h-10 bg-gradient-to-b from-court-orange/50 to-transparent"></div>
+                        </div>
+                        <div class="glass-card p-3 rounded-2xl flex-1 border border-white/5">
+                            <span class="text-[8px] text-court-orange font-bold font-athletic tracking-widest block">MEDIO TIEMPO • DESDE LAS 19:00 PM</span>
+                            <h4 class="font-bold text-xs text-white mt-0.5">CONCIERTO EN VIVO: BANDA DE ROCK</h4>
+                            <p class="text-[11px] text-slate-400 mt-1">Show en la duela principal con los mejores riffs de rock en vivo.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tiempo 4: Piñata y pastel -->
+                    <div class="flex gap-4 items-start relative pb-1">
+                        <div class="flex flex-col items-center flex-shrink-0">
+                            <div class="w-7 h-7 rounded-full bg-court-orange/25 border border-court-orange text-court-orange flex items-center justify-center text-xs font-bold font-athletic">4</div>
+                            <div class="w-0.5 h-10 bg-gradient-to-b from-court-orange/50 to-transparent"></div>
+                        </div>
+                        <div class="glass-card p-3 rounded-2xl flex-1 border border-white/5">
+                            <span class="text-[8px] text-court-orange font-bold font-athletic tracking-widest block">4TO CUARTO • 21:00 PM - 21:30 PM</span>
+                            <h4 class="font-bold text-xs text-white mt-0.5">MVP CELEBRATION (Piñata y Pastel)</h4>
+                            <p class="text-[11px] text-slate-400 mt-1">El momento tradicional de la noche: pastel y soplada de velas de Ángel.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tiempo 5: Más Sorpresas -->
+                    <div class="flex gap-4 items-start">
+                        <div class="flex flex-col items-center flex-shrink-0">
+                            <div class="w-7 h-7 rounded-full bg-court-orange/25 border border-court-orange text-court-orange flex items-center justify-center text-xs font-bold font-athletic">ET</div>
+                        </div>
+                        <div class="glass-card p-3 rounded-2xl flex-1 border border-white/5">
+                            <span class="text-[8px] text-court-orange font-bold font-athletic tracking-widest block">TIEMPO EXTRA • 22:00 PM</span>
+                            <h4 class="font-bold text-xs text-white mt-0.5">MÁS SORPRESAS Y AFTER PARTY</h4>
+                            <p class="text-[11px] text-slate-400 mt-1">El partido no termina. Sigue la música, sorpresas y juegos de duela abierta.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicador de desplazamiento hacia abajo -->
+                <div class="flex flex-col items-center mt-auto cursor-pointer" onclick="scrollToSlide(2)">
+                    <span class="text-[9px] text-slate-400 tracking-[0.3em] uppercase font-bold">DÓNDE Y CÓMO LLEGAR</span>
+                    <i class="fa-solid fa-chevron-down text-court-orange text-xs mt-1.5 bounce-arrow"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 3: UBICACIÓN, VESTIMENTA Y REGALO -->
+        <section class="snap-section flex flex-col justify-between safe-top-pt safe-bottom-pb px-6">
+            <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between">
+                <div class="text-center mb-1">
+                    <h3 class="font-athletic font-black text-xl text-white">DETALLES DE LA CONVOCATORIA</h3>
+                    <p class="text-xs text-slate-400">Todo listo para el salto a la duela</p>
+                </div>
+
+                <!-- Contenedor general enfocado en la localización -->
+                <div class="my-auto space-y-3.5 w-full">
+                    
+                    <!-- Tarjeta de Ubicación -->
+                    <div class="glass-card rounded-2xl p-4 border border-white/5 flex flex-col justify-between">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 rounded-xl bg-court-orange/10 flex items-center justify-center text-court-orange flex-shrink-0">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-white leading-none text-left">LOCALIZACIÓN DEL PARTIDO</h4>
+                                <span class="text-[9px] text-slate-400 font-medium block text-left">Salón de eventos sociales Partenón</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-300 leading-relaxed mb-3 text-left">
+                            Av. John F. Kennedy Mz. 30 Lt. 26, Col. Emiliano Zapata 2a Sección, C.P. 55270, Ecatepec, Estado de México.
+                        </p>
+                        
+                        <!-- Mapa Real Incorporado -->
+                        <div class="relative w-full h-[28dvh] sm:h-56 bg-black/60 rounded-xl border border-white/5 overflow-hidden">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d470.11222291698397!2d-99.06006283724788!3d19.50303302592475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTnCsDMwJzEwLjkiTiA5OcKwMDMnMzYuMiJX!5e0!3m2!1ses-419!2smx!4v1781461582907!5m2!1ses-419!2smx" class="absolute inset-0 w-full h-full border-0 opacity-85 hover:opacity-100 transition-opacity" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                        <a href="https://www.google.com/maps/search/?api=1&query=19.503033,-99.060063" target="_blank" class="w-full bg-white text-black rounded-lg py-2.5 text-[10px] font-bold text-center flex items-center justify-center gap-1.5 z-10 mt-2.5 shadow-md">
+                            <i class="fa-solid fa-diamond-turn-right text-court-orange"></i> Abrir en Google Maps
+                        </a>
+                    </div>
+
+                    <!-- Grid de información de Vestimenta y Regalos -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Código de vestimenta -->
+                        <div class="glass-card rounded-2xl p-3 border border-white/5 flex flex-col justify-between min-h-[90px]">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 flex-shrink-0">
+                                    <i class="fa-solid fa-shirt text-xs"></i>
+                                </div>
+                                <h4 class="font-bold text-[10px] text-white uppercase tracking-wider text-left">VESTIMENTA</h4>
+                            </div>
+                            <p class="text-[10px] text-slate-300 leading-normal text-left">
+                                <strong>Semiformal:</strong> Viste elegante para el gran día de Ángel.
+                            </p>
+                        </div>
+
+                        <!-- Mesa de Regalos -->
+                        <div class="glass-card rounded-2xl p-3 border border-white/5 flex flex-col justify-between min-h-[90px]">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                                    <i class="fa-solid fa-gift text-xs"></i>
+                                </div>
+                                <h4 class="font-bold text-[10px] text-white uppercase tracking-wider text-left">Regalo</h4>
+                            </div>
+                            <p class="text-[9px] text-slate-300 leading-snug text-left">
+                                Tu presencia es nuestro mejor enceste. Si gustas tener un detalle con Ángel se lo podrás dar ese día.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicador de desplazamiento hacia abajo -->
+                <div class="flex flex-col items-center mt-auto cursor-pointer" onclick="scrollToSlide(3)">
+                    <span class="text-[9px] text-slate-400 tracking-[0.3em] uppercase font-bold">CONFIRMAR ALINEACIÓN</span>
+                    <i class="fa-solid fa-chevron-down text-court-orange text-xs mt-1.5 bounce-arrow"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= STREAMING_CHUNK: Diseñando el Formulario RSVP y el Ticket VIP ================= -->
+
+        <!-- DIAPOSITIVA 4: FORMULARIO DE CONFIRMACIÓN (RSVP) -->
+        <section class="snap-section flex flex-col justify-between safe-top-pt safe-bottom-pb px-6">
+            <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between">
+                <div class="text-center mb-2">
+                    <span class="inline-block bg-white/5 border border-white/10 text-white font-athletic text-[9px] font-black tracking-widest uppercase px-3.5 py-1.5 rounded-full mb-1">
+                        CONFIRMAR ALINEACIÓN
+                    </span>
+                    <h3 class="font-athletic font-black text-xl text-white">¿TE UNES AL EQUIPO?</h3>
+                    <p class="text-xs text-slate-400">Regístrate para desbloquear tu pase VIP en la duela.</p>
+                </div>
+
+                <!-- Formulario RSVP estilo minimalista Apple -->
+                <div class="my-auto w-full">
+                    <div class="glass-card-orange rounded-[28px] p-5 shadow-xl relative">
+                        <form id="rsvp-form" onsubmit="handleRSVPOubmit(event)" class="space-y-3.5">
+                            <div>
+                                <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 text-left">Nombre Completo del Jugador/Invitado</label>
+                                <input type="text" id="rsvp-name" required placeholder="Ej. Michael Jordan" class="w-full bg-black/60 border border-white/10 focus:border-court-orange rounded-xl py-2.5 px-4 text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-court-orange transition-all">
+                            </div>
+
+                            <div>
+                                <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 text-left">Correo Electrónico</label>
+                                <input type="email" id="rsvp-email" required placeholder="Ej. correo@dominio.com" class="w-full bg-black/60 border border-white/10 focus:border-court-orange rounded-xl py-2.5 px-4 text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-court-orange transition-all">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 text-left">¿Asistirás?</label>
+                                    <select id="rsvp-attendance" class="w-full bg-black/60 border border-white/10 focus:border-court-orange rounded-xl py-2.5 px-3 text-white text-xs focus:outline-none transition-all">
+                                        <option value="yes" class="bg-[#05070C]">¡Confirmado! (Sí)</option>
+                                        <option value="no" class="bg-[#05070C]">Baja de plantel (No)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 text-left">Acompañantes</label>
+                                    <select id="rsvp-guests" class="w-full bg-black/60 border border-white/10 focus:border-court-orange rounded-xl py-2.5 px-3 text-white text-xs focus:outline-none transition-all">
+                                        <option value="0" class="bg-[#05070C]">Solo yo</option>
+                                        <option value="1" class="bg-[#05070C]">1 Persona extra</option>
+                                        <option value="2" class="bg-[#05070C]">2 Personas extras</option>
+                                        <option value="3" class="bg-[#05070C]">3 Personas extras</option>
+                                        <option value="4" class="bg-[#05070C]">4 Personas extras</option>
+                                        <option value="5" class="bg-[#05070C]">5 Personas extras</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 text-left">Mensaje de Motivación para Ángel</label>
+                                <textarea id="rsvp-message" rows="2" placeholder="¡Mándale un saludo o buenos deseos!" class="w-full bg-black/60 border border-white/10 focus:border-court-orange rounded-xl py-2.5 px-4 text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-court-orange transition-all resize-none"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-white hover:bg-slate-100 text-black font-athletic font-extrabold py-3 px-6 rounded-xl transition-all transform hover:scale-[1.01] active:scale-95 text-center flex items-center justify-center gap-2 text-xs">
+                                ENVIAR CONFIRMACIÓN <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                            </button>
+                        </form>
+
+                        <!-- Mensaje de confirmación de registro exitoso -->
+                        <div id="rsvp-success" class="hidden text-center py-4">
+                            <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500 rounded-full flex items-center justify-center text-emerald-400 text-xl mx-auto mb-3">
+                                <i class="fa-solid fa-check-double"></i>
+                            </div>
+                            <h4 class="font-athletic font-black text-base text-white">¡REGISTRO EXITOSO!</h4>
+                            <p class="text-[11px] text-slate-300 max-w-xs mx-auto mt-2 leading-relaxed">
+                                Tu pase VIP se ha desbloqueado correctamente. Míralo en la siguiente diapositiva.
+                            </p>
+                            <button onclick="editRSVP()" class="mt-4 text-[10px] text-slate-400 hover:text-white underline font-medium">
+                                Editar mi información
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicador de desplazamiento hacia abajo -->
+                <div class="flex flex-col items-center mt-auto cursor-pointer" onclick="scrollToSlide(4)">
+                    <span class="text-[9px] text-slate-400 tracking-[0.3em] uppercase font-bold">VER MI PASE VIP</span>
+                    <i class="fa-solid fa-chevron-down text-court-orange text-xs mt-1.5 bounce-arrow"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 5: TICKET DIGITAL VIP CON SISTEMA DE BLOQUEO -->
+        <section class="snap-section flex flex-col justify-between safe-top-pt safe-bottom-pb px-6 relative">
+            <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between relative">
+                
+                <!-- CAPA SUPERIOR DE BLOQUEO (LOCKED BLUR OVERLAY) -->
+                <div id="ticket-lock-overlay" class="absolute inset-0 bg-[#020205]/85 backdrop-blur-xl z-30 flex flex-col justify-center items-center p-6 text-center transition-all duration-700 ease-in-out">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-court-orange/20 to-amber-500/20 border border-court-orange/30 rounded-full flex items-center justify-center text-court-orange text-3xl mb-5 shadow-2xl animate-pulse">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 class="font-athletic font-black text-xl text-white tracking-tight">ACCESO RESERVADO</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mt-2 leading-relaxed">
+                        Tu pase especial VIP está esperando tu alineación oficial. Completa el RSVP para desbloquear tu boleto de acceso para la gran noche.
+                    </p>
+                    <button onclick="scrollToSlide(3)" class="mt-6 bg-court-orange hover:bg-court-orange-dark text-white font-athletic font-extrabold text-xs py-3 px-6 rounded-xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                        COMPLETAR CONFIRMACIÓN <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                </div>
+
+                <!-- CONTENIDO DEL TICKET REVELADO TRAS EL RSVP -->
+                <div class="text-center my-auto w-full z-10 flex flex-col justify-center h-full max-h-[85vh]">
+                    <h3 class="font-athletic font-black text-xl text-white tracking-tight">TU TICKET PARA EL ALL-STAR</h3>
+                    <p class="text-[11px] text-slate-400 mt-1 mb-2">Preséntalo en la entrada del Salón Partenón</p>
+
+                    <!-- Ticket Interactivo de Tamaño Ampliado -->
+                    <div id="ticket-container" class="relative bg-[#0c0e17] rounded-[28px] border border-white/10 shadow-2xl overflow-hidden text-left mx-auto w-full max-w-[430px] sm:max-w-[470px] transition-all">
+                        <!-- Decoración Lateral de muescas de ticket -->
+                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-4.5 h-8 bg-[#020205] rounded-r-full border-r border-y border-white/10 z-20"></div>
+                        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-4.5 h-8 bg-[#020205] rounded-l-full border-l border-y border-white/10 z-20"></div>
+
+                        <!-- Cabecera del Boleto (Diseño Premium) -->
+                        <div class="bg-gradient-to-r from-court-orange to-amber-500 p-5 text-black flex justify-between items-center">
+                            <div>
+                                <span class="font-athletic font-black text-[9px] tracking-widest bg-black text-white px-2 py-0.5 rounded-full">ADMIT ONE</span>
+                                <h4 class="font-athletic font-black text-base tracking-tight mt-1.5 uppercase">ALL-STAR GAME 18</h4>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <i class="fa-solid fa-basketball text-black text-2xl animate-spin" style="animation-duration: 12s"></i>
+                                <span class="text-[8px] font-bold mt-1">DRAFT CLASS 2026</span>
+                            </div>
+                        </div>
+
+                        <!-- Contenido Principal del Boleto -->
+                        <div class="p-6 flex flex-col justify-between space-y-4 bg-[#0d101d]">
+                            <div class="flex justify-between items-start gap-3">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider text-left">JUGADOR INVITADO / MVP</p>
+                                    <p id="ticket-guest-name" class="font-athletic font-black text-lg sm:text-xl text-white tracking-tight mt-1 truncate text-left">
+                                        ESPERANDO ALINEACIÓN...
+                                    </p>
+                                </div>
+                                <div id="ticket-status" class="font-athletic font-bold text-[9px] text-emerald-400 flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-full self-start">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> ACCESO ACTIVO
+                                </div>
+                            </div>
+
+                            <!-- Bloque de Ubicación Dinámica -->
+                            <div class="bg-white/5 border border-white/5 rounded-2xl p-5 space-y-3">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-slate-500 text-[9px] font-bold uppercase tracking-wider text-left">SECCIÓN / ZONA</p>
+                                        <p id="ticket-seat-zone" class="font-athletic font-bold text-sm text-court-orange mt-0.5 text-left">VIP - DUELA INDIVIDUAL</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-slate-500 text-[9px] font-bold uppercase tracking-wider text-left">ASIENTOS / ACCESO</p>
+                                        <p id="ticket-seat-number" class="font-athletic font-bold text-sm text-white mt-0.5 text-left">ASIENTO A-18</p>
+                                    </div>
+                                </div>
+                                <div class="border-t border-white/5 pt-3 flex justify-between items-center text-xs">
+                                    <span class="text-slate-400"><i class="fa-solid fa-clock mr-1.5 text-court-orange"></i> 15 de Agosto • 17:00 PM</span>
+                                    <span id="ticket-companions-badge" class="font-bold bg-court-orange/10 text-court-orange px-2.5 py-1 rounded">Solo Tú</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divisor punteado -->
+                        <div class="px-5 bg-[#0d101d]">
+                            <div class="border-t-2 border-dashed border-white/10 h-[1px]"></div>
+                        </div>
+
+                        <!-- Pie del Boleto / QR Dinámico sin contornos blancos exagerados -->
+                        <div class="p-5 bg-[#080a12] flex flex-col items-center justify-center space-y-3">
+                            <!-- QR con excelente visibilidad y relleno mínimo -->
+                            <div class="p-2 bg-white rounded-xl shadow-lg shadow-court-orange/5 flex items-center justify-center w-32 h-32 sm:w-36 sm:h-36">
+                                <canvas id="ticket-qr" class="block w-full h-full"></canvas>
+                            </div>
+                            <div class="text-center space-y-1">
+                                <span id="ticket-id-label" class="text-[9px] text-slate-500 font-athletic tracking-[0.3em] block">ANGEL-08152026-XXXX</span>
+                                <span class="text-[10px] text-slate-400 inline-block"><i class="fa-solid fa-qrcode text-court-orange mr-1"></i> Escanea para validar invitación y roster</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción Directa estilo Apple Premium -->
+                    <div class="mt-4 space-y-2 flex flex-col items-center w-full max-w-[280px] mx-auto">
+                        <button onclick="downloadTicketImage()" class="w-full bg-white hover:bg-slate-100 text-black rounded-xl py-3 px-4 flex items-center justify-center gap-2.5 shadow-lg transition-all active:scale-95">
+                            <i class="fa-regular fa-image text-sm text-court-orange"></i>
+                            <span id="direct-download-btn-text" class="font-athletic font-extrabold text-xs tracking-wide">GUARDAR BOLETO</span>
+                        </button>
+                        
+                        <button onclick="downloadCalendarEvent()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl py-3 px-4 flex items-center justify-center gap-2.5 transition-all active:scale-95">
+                            <i class="fa-regular fa-calendar-check text-sm text-amber-500"></i>
+                            <span class="font-athletic font-bold text-xs tracking-wide">AGREGAR AL CALENDARIO</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Indicador de desplazamiento hacia abajo -->
+                <div class="flex flex-col items-center mt-auto cursor-pointer" onclick="scrollToSlide(5)">
+                    <span class="text-[9px] text-slate-400 tracking-[0.3em] uppercase font-bold">DESAFÍO EN LA DUELA</span>
+                    <i class="fa-solid fa-chevron-down text-court-orange text-xs mt-1.5 bounce-arrow"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 6: MINI-JUEGO DUNK CHALLENGE -->
+        <section class="snap-section flex flex-col justify-between safe-top-pt safe-bottom-pb px-6">
+            <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between">
+                <div class="text-center mb-3">
+                    <span class="inline-block bg-court-orange/10 text-court-orange font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-1.5">
+                        DUNK CHALLENGE
+                    </span>
+                    <h3 class="font-athletic font-black text-xl text-white">ENCESTA LOS 18</h3>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">
+                        ¡Suma puntos para el marcador de Ángel! Arrastra el balón al aro.
+                    </p>
+                </div>
+
+                <!-- Arena de juego -->
+                <div class="my-auto w-full space-y-3">
+                    <div class="glass-card rounded-[22px] p-3 border border-white/5 shadow-inner">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <span class="text-slate-300 text-[11px] font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-basketball text-court-orange"></i> MARCADOR
+                            </span>
+                            <div class="flex gap-4">
+                                <span class="text-[11px] text-slate-400">Puntos: <strong id="game-score" class="text-court-orange text-xs font-athletic">0</strong></span>
+                                <span class="text-[11px] text-slate-400">Récord: <strong id="game-highscore" class="text-white text-xs font-athletic">0</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Canvas -->
+                        <div class="relative w-full aspect-[4/3] bg-black/60 rounded-xl overflow-hidden border border-white/5 flex justify-center items-center">
+                            <canvas id="basketball-canvas" class="w-full h-full block cursor-pointer"></canvas>
+                            
+                            <div id="game-instruction" class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-4 text-center pointer-events-none transition-all duration-300">
+                                <div class="w-12 h-12 rounded-full bg-court-orange/20 border border-court-orange/40 flex items-center justify-center text-court-orange text-xl mb-2.5 animate-bounce">
+                                    <i class="fa-solid fa-hand-pointer"></i>
+                                </div>
+                                <p class="font-bold text-xs text-white">¡Desliza para Tirar!</p>
+                                <p class="text-[10px] text-slate-400 max-w-[200px] mt-1">Haz clic/toca y arrastra hacia arriba con fuerza en dirección al aro.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mt-2.5 px-1">
+                            <button onclick="playBounceSound()" class="text-[10px] text-slate-500 hover:text-slate-300 flex items-center gap-1">
+                                <i class="fa-solid fa-volume-high"></i> Probar Audio
+                            </button>
+                            <button onclick="resetGame()" class="text-[10px] bg-white/5 hover:bg-white/10 text-white font-bold px-3 py-1 rounded-lg border border-white/5 transition-all">
+                                Reiniciar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer y botón para volver al inicio -->
+                <footer class="text-center mt-auto space-y-3">
+                    <button onclick="scrollToSlide(0)" class="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 mx-auto transition-all bg-white/5 border border-white/10 px-4 py-1.5 rounded-full font-bold">
+                        <i class="fa-solid fa-arrow-up"></i> Volver al Inicio
+                    </button>
+                    <div class="border-t border-white/5 pt-3">
+                        <p class="text-[8px] tracking-[0.2em] uppercase font-bold text-slate-500">ALL-STAR DRAFT PARTY 2026</p>
+                        <div class="flex justify-center gap-1.5 mt-2 text-[9px]">
+                            <span class="px-2 py-0.5 bg-white/5 rounded text-slate-400 font-medium">#Angel18</span>
+                            <span class="px-2 py-0.5 bg-white/5 rounded text-slate-400 font-medium">#DraftDay</span>
+                            <span class="px-2 py-0.5 bg-white/5 rounded text-slate-400 font-medium">#MambaMentality</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ================= STREAMING_CHUNK: Diseñando el Panel de Acceso del Anfitrión (PIN Pad & Dashboard) ================= -->
+
+    <!-- MODAL DE PIN PARA EL ANFITRIÓN (Estilo iOS Keypad) -->
+    <div id="host-pin-modal" class="fixed inset-0 z-50 hidden bg-[#020205]/95 backdrop-blur-xl flex items-center justify-center p-6">
+        <div class="w-full max-w-xs flex flex-col items-center">
+            <div class="w-12 h-12 rounded-full bg-court-orange/10 border border-court-orange/30 flex items-center justify-center text-court-orange text-lg mb-4">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h3 class="font-athletic font-black text-lg text-white mb-1">ACCESO ANFITRION</h3>
+            <p class="text-[11px] text-slate-400 mb-6">Ingresa el PIN de acceso del equipo</p>
+            
+            <!-- Visor de PIN -->
+            <div class="flex gap-4 mb-8">
+                <div id="pin-dot-1" class="w-3.5 h-3.5 rounded-full border border-white/20 bg-transparent transition-all"></div>
+                <div id="pin-dot-2" class="w-3.5 h-3.5 rounded-full border border-white/20 bg-transparent transition-all"></div>
+                <div id="pin-dot-3" class="w-3.5 h-3.5 rounded-full border border-white/20 bg-transparent transition-all"></div>
+                <div id="pin-dot-4" class="w-3.5 h-3.5 rounded-full border border-white/20 bg-transparent transition-all"></div>
+            </div>
+
+            <!-- Botones numéricos -->
+            <div class="grid grid-cols-3 gap-4 w-full">
+                <button onclick="pressPinKey('1')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">1</button>
+                <button onclick="pressPinKey('2')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">2</button>
+                <button onclick="pressPinKey('3')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">3</button>
+                <button onclick="pressPinKey('4')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">4</button>
+                <button onclick="pressPinKey('5')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">5</button>
+                <button onclick="pressPinKey('6')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">6</button>
+                <button onclick="pressPinKey('7')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">7</button>
+                <button onclick="pressPinKey('8')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">8</button>
+                <button onclick="pressPinKey('9')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">9</button>
+                <button onclick="closeHostModal()" class="w-14 h-14 rounded-full text-slate-400 font-bold text-xs flex items-center justify-center hover:text-white transition-all mx-auto">CERRAR</button>
+                <button onclick="pressPinKey('0')" class="w-14 h-14 rounded-full bg-white/5 border border-white/5 text-white font-athletic font-bold text-lg flex items-center justify-center active:bg-white/15 active:scale-95 transition-all mx-auto">0</button>
+                <button onclick="deleteLastPinKey()" class="w-14 h-14 rounded-full text-slate-400 text-sm flex items-center justify-center hover:text-white transition-all mx-auto"><i class="fa-solid fa-delete-left"></i></button>
+            </div>
+            <p class="text-[10px] text-slate-600 mt-6 tracking-widest">TIP: EL PIN ES 1818</p>
+        </div>
+    </div>
+
+    <!-- ================= STREAMING_CHUNK: Creando el Panel Principal de Administración ================= -->
+
+    <!-- PANEL DEL ANFITRIÓN (DASHBOARD REAL-TIME + ESCÁNER DE CAMARA) -->
+    <div id="host-panel-screen" class="fixed inset-0 z-40 hidden bg-[#05060b] flex flex-col overflow-hidden text-white">
+        <!-- Header del panel -->
+        <header class="bg-black/40 backdrop-blur-md px-6 pt-[calc(1.2rem+env(safe-area-inset-top))] pb-4 flex justify-between items-center border-b border-white/5">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-lg bg-court-orange flex items-center justify-center text-black font-athletic font-black text-[10px]">
+                    MVP
+                </div>
+                <div>
+                    <h2 class="font-athletic font-black text-[12px] tracking-wide text-white leading-none">PANEL ANFITRIÓN</h2>
+                    <p class="text-[8px] text-court-orange font-bold uppercase mt-0.5">Control de Roster en Vivo</p>
+                </div>
+            </div>
+            <button onclick="closeHostPanel()" class="bg-white/5 hover:bg-white/10 text-xs px-3 py-1.5 rounded-lg border border-white/10 font-bold transition-all">
+                Cerrar Panel
+            </button>
+        </header>
+
+        <!-- Pestañas de control superior -->
+        <div class="flex border-b border-white/5 bg-[#090b12]">
+            <button onclick="switchHostTab('scanner')" id="tab-btn-scanner" class="flex-1 py-3 text-center border-b-2 border-court-orange text-xs font-athletic font-bold text-court-orange transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-qrcode"></i> ESCANEAR QR
+            </button>
+            <button onclick="switchHostTab('roster')" id="tab-btn-roster" class="flex-1 py-3 text-center border-b-2 border-transparent text-slate-400 text-xs font-athletic font-bold hover:text-white transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-clipboard-list"></i> LISTA DE INVITADOS (<span id="roster-badge-count">0</span>)
+            </button>
+        </div>
+
+        <!-- Contenido dinámico del panel -->
+        <div class="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6">
+            
+            <!-- PANEL SECCIÓN 1: ESCÁNER QR -->
+            <div id="host-sec-scanner" class="space-y-6">
+                <!-- Tarjetas de Estadísticas Rápidas -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-white/5 border border-white/5 rounded-2xl p-3 text-center">
+                        <span class="text-[9px] text-slate-400 block uppercase font-bold">Asistencia</span>
+                        <span id="stat-attendance-count" class="font-athletic font-black text-xl text-court-orange mt-0.5 block">0/0</span>
+                    </div>
+                    <div class="bg-white/5 border border-white/5 rounded-2xl p-3 text-center">
+                        <span class="text-[9px] text-slate-400 block uppercase font-bold">Compañeros</span>
+                        <span id="stat-guests-count" class="font-athletic font-black text-xl text-amber-500 mt-0.5 block">0</span>
+                    </div>
+                    <div class="bg-white/5 border border-white/5 rounded-2xl p-3 text-center">
+                        <span class="text-[9px] text-slate-400 block uppercase font-bold">Checked-In</span>
+                        <span id="stat-checkin-count" class="font-athletic font-black text-xl text-emerald-400 mt-0.5 block">0</span>
+                    </div>
+                </div>
+
+                <!-- Lector de QR por cámara nativa -->
+                <div class="bg-white/5 border border-white/10 rounded-3xl p-5 relative overflow-hidden flex flex-col items-center">
+                    <h4 class="font-athletic text-[11px] font-black text-slate-300 uppercase tracking-widest mb-4">CÁMARA DEL TERMINAL</h4>
+                    
+                    <!-- Lector físico donde se renderizará el canvas de escaneo de html5-qrcode -->
+                    <div class="relative w-full aspect-square max-w-[260px] bg-black rounded-2xl overflow-hidden border border-white/10 flex items-center justify-center">
+                        <div id="reader" class="w-full h-full"></div>
+                        <div id="reader-overlay-border" class="absolute inset-4 pointer-events-none border-2 border-dashed border-court-orange/40 rounded-xl"></div>
+                    </div>
+
+                    <!-- Mensajes informativos de estado del escáner -->
+                    <div class="mt-4 flex flex-col items-center space-y-2 text-center">
+                        <div id="scanner-status" class="text-xs text-slate-400 flex items-center gap-1.5 bg-white/5 px-3 py-1 rounded-full border border-white/5">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse"></span> Buscando Cámara...
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="startScanning()" class="bg-court-orange text-white text-[11px] font-bold px-4 py-2 rounded-lg active:scale-95 transition-all">
+                                <i class="fa-solid fa-camera mr-1"></i> Encender Cámara
+                            </button>
+                            <button onclick="stopScanning()" class="bg-white/10 text-white text-[11px] font-bold px-4 py-2 rounded-lg active:scale-95 transition-all">
+                                <i class="fa-solid fa-video-slash mr-1"></i> Apagar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL SECCIÓN 2: ROSTER DE INVITADOS -->
+            <div id="host-sec-roster" class="hidden space-y-4">
+                <!-- Barra de búsqueda e ingreso manual rápido -->
+                <div class="space-y-3">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                        <input type="text" id="roster-search" oninput="filterRoster()" placeholder="Buscar por nombre o correo..." class="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-court-orange transition-all">
+                    </div>
+                    
+                    <!-- Botón para simular datos demo en local -->
+                    <div id="demo-notice" class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] text-amber-500 font-bold uppercase tracking-wider">MODO SIMULADOR</p>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Carga registros demo para validar el escáner.</p>
+                        </div>
+                        <button onclick="loadDemoRSVPs()" class="bg-amber-500 hover:bg-amber-600 text-black text-[10px] font-bold py-1 px-2.5 rounded-lg transition-all active:scale-95">
+                            Cargar Demo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Registrados -->
+                <div id="roster-list-container" class="space-y-2.5">
+                    <!-- Se llena dinámicamente con JS -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= STREAMING_CHUNK: Creando el Modal de Estatus del Escaneo QR ================= -->
+
+    <!-- MODAL DE ESTATUS DEL ESCANEO (SUCCESS / ERROR DE CHECK-IN) -->
+    <div id="scan-result-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-6">
+        <div id="scan-result-card" class="w-full max-w-sm rounded-[32px] p-6 text-center border transition-all scale-95 opacity-0 duration-300">
+            <!-- Icono dinámico -->
+            <div id="scan-result-icon-container" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i id="scan-result-icon" class="fa-solid fa-circle-question"></i>
+            </div>
+            
+            <!-- Estatus -->
+            <span id="scan-result-badge" class="font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block">ESTATUS</span>
+            
+            <h3 id="scan-result-title" class="font-athletic font-black text-xl text-white tracking-tight mt-1 truncate">ESPERANDO ESCANEO</h3>
+            <p id="scan-result-email" class="text-xs text-slate-500">correo@ejemplo.com</p>
+
+            <div class="h-[1px] bg-white/10 w-full my-4"></div>
+
+            <!-- Detalles del pase escaneado -->
+            <div class="space-y-3.5 text-left bg-white/5 border border-white/5 rounded-2xl p-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold">ID TICKET</span>
+                        <span id="scan-result-id" class="text-xs text-white font-mono mt-0.5 block truncate">ANGEL-0815-XXXX</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold">ACOMPAÑANTES</span>
+                        <span id="scan-result-guests" class="text-xs text-white font-bold mt-0.5 block">0</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold">ZONA</span>
+                        <span id="scan-result-zone" class="text-xs text-court-orange font-bold mt-0.5 block truncate">DUELA VIP</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold">ASIENTO</span>
+                        <span id="scan-result-seat" class="text-xs text-white mt-0.5 block truncate">A-18</span>
+                    </div>
+                </div>
+                <div class="border-t border-white/5 pt-2.5">
+                    <span class="text-[9px] text-slate-500 block uppercase font-bold">MENSAJE A ÁNGEL</span>
+                    <p id="scan-result-message" class="text-[11px] text-slate-400 mt-0.5 leading-relaxed italic">"Sin mensaje escrito..."</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+                <button onclick="closeScanResultModal()" class="flex-1 bg-white/10 hover:bg-white/15 text-white font-bold text-xs py-3 px-4 rounded-xl transition-all">
+                    Listo / Cerrar
+                </button>
+                <button id="scan-action-btn" onclick="toggleGuestCheckInFromModal()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all">
+                    REGISTRAR ENTRADA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= STREAMING_CHUNK: Código Lógico JavaScript de la Invitación ================= -->
+    <script>
+        // Variables globales de la aplicación
+        let localRSVPData = null;
+        let countdownInterval;
+        let activeSlideIndex = 0;
+        const totalSlides = 6;
+        
+        // Base de Datos Unificada de Invitados (Simulador Local si Firebase no está configurado)
+        let rsvpsDatabase = [];
+        let html5QrCode = null;
+        let pinInput = "";
+        const correctPIN = "1818";
+        let activeScanResultGuest = null;
+
+        // Configuración de Web Audio API
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Sintetizador de bote de balón
+        function playBounceSound() {
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(35, audioCtx.currentTime + 0.16);
+                
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.16);
+            } catch(e) {
+                console.log("Audio no disponible aún.");
+            }
+        }
+
+        // Sintetizador de enceste limpio (swish)
+        function playSwishSound() {
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const bufferSize = audioCtx.sampleRate * 0.22;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                
+                const noiseNode = audioCtx.createBufferSource();
+                noiseNode.buffer = buffer;
+                
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1100, audioCtx.currentTime);
+                filter.Q.setValueAtTime(2.2, audioCtx.currentTime);
+                
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.22);
+                
+                noiseNode.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                noiseNode.start();
+                noiseNode.stop(audioCtx.currentTime + 0.22);
+            } catch(e) {
+                console.log("Error de nodo de audio.");
+            }
+        }
+
+        // Pitido de éxito para validación QR
+        function playScanSuccessSound() {
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Tono alto de éxito
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        // Pitido de error / advertencia para validación QR
+        function playScanErrorSound() {
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime); // Tono grave de error
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } catch(e) {}
+        }
+
+        // Inicializador general de ventana
+        window.onload = function() {
+            initCountdown();
+            loadLocalRSVP();
+            setupBasketballGame();
+            setupScrollTracker();
+            loadInitialDatabase();
+        };
+
+        // Cargar Base de datos local/simulada inicial
+        function loadInitialDatabase() {
+            const stored = localStorage.getItem('angel18_guests_db_v2');
+            if (stored) {
+                rsvpsDatabase = JSON.parse(stored);
+            } else {
+                rsvpsDatabase = [];
+            }
+            updateHostPanelStats();
+        }
+
+        // Salvar Base de datos local
+        function saveDatabase() {
+            localStorage.setItem('angel18_guests_db_v2', JSON.stringify(rsvpsDatabase));
+            updateHostPanelStats();
+        }
+
+        // ================= STREAMING_CHUNK: Lógica de Splash y Navegación =================
+
+        // Tapping secreto en splash ball
+        let ballTaps = 0;
+        function handleSplashBallClick() {
+            ballTaps++;
+            playBounceSound();
+            if (ballTaps >= 5) {
+                ballTaps = 0;
+                openHostModal();
+            }
+        }
+
+        // Pasar de la pantalla de bienvenida al contenido principal
+        function enterInvitation() {
+            initAudio();
+            playBounceSound();
+            
+            const splash = document.getElementById('splash-screen');
+            const main = document.getElementById('main-content');
+            const sideNav = document.getElementById('side-nav');
+            const appHeader = document.getElementById('app-header');
+            
+            splash.style.opacity = '0';
+            splash.style.transform = 'scale(1.08)';
+            
+            setTimeout(() => {
+                splash.classList.add('hidden');
+                main.classList.remove('hidden');
+                sideNav.classList.remove('hidden');
+                sideNav.classList.add('flex');
+                appHeader.classList.remove('hidden');
+                appHeader.classList.add('flex');
+                
+                // Forzar redibujo de canvas
+                resizeCanvas();
+            }, 600);
+        }
+
+        // Controlar el scroll de las diapositivas con snap
+        function scrollToSlide(index) {
+            const container = document.getElementById('main-content');
+            const sections = container.getElementsByClassName('snap-section');
+            if (sections[index]) {
+                sections[index].scrollIntoView({ behavior: 'smooth' });
+                updateActiveDot(index);
+            }
+        }
+
+        // Configurar el detector de scroll para actualizar los indicadores laterales de Apple
+        function setupScrollTracker() {
+            const container = document.getElementById('main-content');
+            
+            container.addEventListener('scroll', () => {
+                const scrollTop = container.scrollTop;
+                const sectionHeight = container.clientHeight;
+                const newIndex = Math.round(scrollTop / sectionHeight);
+                
+                if (newIndex !== activeSlideIndex && newIndex >= 0 && newIndex < totalSlides) {
+                    updateActiveDot(newIndex);
+                }
+            });
+        }
+
+        // Actualizar el estado de la navegación lateral y el gradiente de fondo en HTML
+        function updateActiveDot(index) {
+            activeSlideIndex = index;
+            const dots = document.getElementsByClassName('dot-indicator');
+            for (let i = 0; i < dots.length; i++) {
+                if (i === index) {
+                    dots[i].classList.add('active');
+                } else {
+                    dots[i].classList.remove('active');
+                }
+            }
+            
+            // Cambiar dinámicamente el gradiente Apple del fondo general (body) según la sección activa
+            const bgGlow = document.getElementById('dynamic-bg-glow');
+            bgGlow.className = "fixed inset-0 z-0 transition-all duration-1000 ease-in-out";
+            
+            if (index === 0 || index === 3) {
+                bgGlow.classList.add('apple-gradient-1');
+            } else if (index === 1 || index === 4) {
+                bgGlow.classList.add('apple-gradient-2');
+            } else {
+                bgGlow.classList.add('apple-gradient-3');
+            }
+            
+            // Actualizar etiqueta del encabezado según las nuevas posiciones
+            const badges = [
+                "Temporada 18",
+                "Cronograma",
+                "Estadio & Más",
+                "Confirmación",
+                "Pase Especial",
+                "Dunk Game"
+            ];
+            document.getElementById('current-slide-badge').innerText = badges[index] || "Ángel 18";
+        }
+
+        // Cuenta Regresiva para el 15 de Agosto de 2026 17:00:00 (5:00 PM)
+        function initCountdown() {
+            const targetDate = new Date('August 15, 2026 17:00:00').getTime();
+            
+            function update() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+                
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown-days').innerText = '00';
+                    document.getElementById('countdown-hours').innerText = '00';
+                    document.getElementById('countdown-mins').innerText = '00';
+                    document.getElementById('countdown-secs').innerText = '00';
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('countdown-days').innerText = String(days).padStart(2, '0');
+                document.getElementById('countdown-hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('countdown-mins').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('countdown-secs').innerText = String(seconds).padStart(2, '0');
+            }
+            
+            update();
+            countdownInterval = setInterval(update, 1000);
+        }
+
+        // ================= STREAMING_CHUNK: Procesando el RSVP y Guardado Dinámico =================
+
+        // Cargar datos de RSVP
+        function loadLocalRSVP() {
+            const stored = localStorage.getItem('angel_18_rsvp_v2');
+            if (stored) {
+                try {
+                    localRSVPData = JSON.parse(stored);
+                    updateTicketUI(localRSVPData);
+                    unlockTicketAndScreen(false); // Desbloqueado sin transiciones en la carga inicial
+                    showRSVPSuccessUI();
+                } catch(e) {
+                    localStorage.removeItem('angel_18_rsvp_v2');
+                }
+            }
+        }
+
+        function unlockTicketAndScreen(triggerTransitions = true) {
+            const lockOverlay = document.getElementById('ticket-lock-overlay');
+            if (lockOverlay) {
+                if (triggerTransitions) {
+                    lockOverlay.classList.add('opacity-0', 'scale-110');
+                    setTimeout(() => {
+                        lockOverlay.classList.add('hidden');
+                    }, 700);
+                } else {
+                    lockOverlay.classList.add('hidden', 'opacity-0');
+                }
+            }
+        }
+
+        function handleRSVPOubmit(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('rsvp-name').value.trim();
+            const email = document.getElementById('rsvp-email').value.trim();
+            const attendance = document.getElementById('rsvp-attendance').value;
+            const guests = document.getElementById('rsvp-guests').value;
+            const message = document.getElementById('rsvp-message').value.trim();
+            
+            if (!name || !email) return;
+
+            const rsvpData = {
+                name: name,
+                email: email,
+                attendance: attendance,
+                guests: guests,
+                message: message,
+                checkIn: false // Inicialmente no ha ingresado al evento
+            };
+
+            // 1. Guardar localmente para el invitado actual
+            localStorage.setItem('angel_18_rsvp_v2', JSON.stringify(rsvpData));
+            localRSVPData = rsvpData;
+
+            // 2. Insertar/Actualizar en la base de datos compartida (Simulador o Firebase)
+            const existingIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
+            if (existingIndex >= 0) {
+                rsvpsDatabase[existingIndex] = rsvpData;
+            } else {
+                rsvpsDatabase.push(rsvpData);
+            }
+            saveDatabase();
+            
+            updateTicketUI(rsvpData);
+            showRSVPSuccessUI();
+            
+            // Celebrar con Confetti Premium
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FF5722', '#FFA726', '#ffffff']
+            });
+
+            playSwishSound();
+            setTimeout(playBounceSound, 200);
+
+            // Desbloquear con efectos visuales fluidos
+            unlockTicketAndScreen(true);
+
+            // Deslizar automáticamente al boleto VIP
+            setTimeout(() => {
+                scrollToSlide(4);
+            }, 850);
+        }
+
+        // ================= STREAMING_CHUNK: Creando Lógica Dinámica de Asignación y QRious =================
+        function updateTicketUI(data) {
+            const nameEl = document.getElementById('ticket-guest-name');
+            const statusEl = document.getElementById('ticket-status');
+            const zoneEl = document.getElementById('ticket-seat-zone');
+            const seatEl = document.getElementById('ticket-seat-number');
+            const companionEl = document.getElementById('ticket-companions-badge');
+            const labelIdEl = document.getElementById('ticket-id-label');
+            
+            // Generación de un ID único y estable basado en el nombre para evitar variaciones continuas
+            const hashId = Math.abs(data.name.split('').reduce((a,b) => {a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)).toString(36).substring(0, 5).toUpperCase();
+            const ticketSerial = `ANGEL-0815-${hashId}`;
+            labelIdEl.innerText = ticketSerial;
+
+            // Variables de asignación de asiento y zona dinámicas
+            let zonaTexto = "VIP - DUELA BAJA";
+            let asientoTexto = "FILA A-18 / INDIVIDUAL";
+            let badgeTexto = "Solo Tú";
+            const companionsCount = parseInt(data.guests) || 0;
+
+            if (data.attendance === 'yes') {
+                nameEl.innerText = data.name.toUpperCase();
+                nameEl.className = "font-athletic font-black text-lg sm:text-xl text-white tracking-tight mt-1 truncate text-left";
+                
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> ACCESO ACTIVO`;
+                    statusEl.className = "font-athletic font-bold text-[9px] text-emerald-400 flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-full self-start";
+                }
+
+                // Algoritmo de distribución de asientos en base a los acompañantes registrados
+                if (companionsCount === 0) {
+                    zonaTexto = "VIP - DUELA PREMIUM";
+                    asientoTexto = "BUTACA A-18";
+                    badgeTexto = "Pase Individual";
+                } else if (companionsCount >= 1 && companionsCount <= 2) {
+                    zonaTexto = "PREFERENTE PLATINO";
+                    asientoTexto = `FILA C - BUTACAS 22-${22 + companionsCount}`;
+                    badgeTexto = `Tú + ${companionsCount}`;
+                } else if (companionsCount >= 3 && companionsCount <= 4) {
+                    zonaTexto = "PALCO MEDIA CANCHA";
+                    asientoTexto = `PALCO FAMILIAR SEC. F`;
+                    badgeTexto = `Grupo Familiar (+${companionsCount})`;
+                } else {
+                    zonaTexto = "SUITE VIP EXECUTIVE";
+                    asientoTexto = `SUITE ALL-STAR NUM. 18`;
+                    badgeTexto = `Pase Grupal (+${companionsCount})`;
+                }
+
+                zoneEl.innerText = zonaTexto;
+                seatEl.innerText = asientoTexto;
+                companionEl.innerText = badgeTexto;
+
+                // Generación instantánea del código QR real con todos los metadatos requeridos por el anfitrión
+                const qrPayload = {
+                    id: ticketSerial,
+                    nombre: data.name,
+                    correo: data.email || 'N/A',
+                    asistencia: 'CONFIRMADO',
+                    acompanantes: companionsCount,
+                    total_pases: companionsCount + 1,
+                    zona: zonaTexto,
+                    asiento: asientoTexto,
+                    mensaje: data.message || '',
+                    evento: "ÁNGEL 18 ALL-STAR GAME 🏀"
+                };
+
+                // Instanciar el QR sin margen blanco
+                new QRious({
+                    element: document.getElementById('ticket-qr'),
+                    value: JSON.stringify(qrPayload),
+                    size: 200,
+                    background: '#ffffff',
+                    foreground: '#020205',
+                    level: 'M',
+                    padding: 0
+                });
+
+            } else {
+                nameEl.innerText = data.name.toUpperCase() + " (BAJA)";
+                nameEl.className = "font-athletic font-bold text-lg sm:text-xl text-slate-500 tracking-tight mt-1 truncate text-left";
+                
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500 inline-block"></span> ENTRADA CANCELADA`;
+                    statusEl.className = "font-athletic font-bold text-[9px] text-red-500 flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-full self-start";
+                }
+                
+                zoneEl.innerText = "NINGUNO";
+                seatEl.innerText = "SIN ACCESO AL RECINTO";
+                companionEl.innerText = "Baja de Plantel";
+
+                // Generación de payload de cancelación en QR
+                const qrPayloadCancel = {
+                    id: ticketSerial,
+                    nombre: data.name,
+                    correo: data.email || 'N/A',
+                    asistencia: 'BAJA DE EQUIPO / NO ASISTE',
+                    acompanantes: 0,
+                    total_pases: 0,
+                    zona: 'NINGUNO',
+                    asiento: 'SIN ACCESO',
+                    mensaje: data.message || '',
+                    evento: "ÁNGEL 18 ALL-STAR GAME 🏀"
+                };
+
+                // QR en blanco/bloqueado compacto
+                new QRious({
+                    element: document.getElementById('ticket-qr'),
+                    value: JSON.stringify(qrPayloadCancel),
+                    size: 200,
+                    background: '#0c0e17',
+                    foreground: '#3f3f46',
+                    level: 'L',
+                    padding: 0
+                });
+            }
+        }
+
+        function showRSVPSuccessUI() {
+            document.getElementById('rsvp-form').classList.add('hidden');
+            document.getElementById('rsvp-success').classList.remove('hidden');
+        }
+
+        // Función para editar el RSVP
+        function editRSVP() {
+            const lockOverlay = document.getElementById('ticket-lock-overlay');
+            if (lockOverlay) {
+                lockOverlay.classList.remove('hidden', 'opacity-0', 'scale-110');
+            }
+
+            document.getElementById('rsvp-form').classList.remove('hidden');
+            document.getElementById('rsvp-success').classList.add('hidden');
+            
+            if (localRSVPData) {
+                document.getElementById('rsvp-name').value = localRSVPData.name || '';
+                document.getElementById('rsvp-email').value = localRSVPData.email || '';
+                document.getElementById('rsvp-attendance').value = localRSVPData.attendance || 'yes';
+                document.getElementById('rsvp-guests').value = localRSVPData.guests || '0';
+                document.getElementById('rsvp-message').value = localRSVPData.message || '';
+            }
+        }
+
+        // Descarga de Pase VIP en formato imagen usando Html2Canvas
+        function downloadTicketImage() {
+            if (!localRSVPData) return;
+            
+            const container = document.getElementById('ticket-container');
+            const directBtnText = document.getElementById('direct-download-btn-text');
+            
+            const originalDirectText = directBtnText ? directBtnText.innerText : "";
+            if (directBtnText) directBtnText.innerText = "PREPARANDO ARCHIVO...";
+
+            html2canvas(container, {
+                backgroundColor: '#0c0e17',
+                scale: 3, // Calidad de alta definición 
+                useCORS: true,
+                logging: false,
+                borderRadius: 28
+            }).then(canvas => {
+                const link = document.createElement('a');
+                const cleanName = localRSVPData.name.trim().replace(/\s+/g, '_');
+                link.download = `Pase_VIP_Angel18_${cleanName}.png`;
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                if (directBtnText) directBtnText.innerText = "¡BOLETO GUARDADO!";
+                
+                setTimeout(() => {
+                    if (directBtnText) directBtnText.innerText = originalDirectText;
+                }, 1500);
+            }).catch(err => {
+                console.error("No se pudo generar la imagen del pase:", err);
+                if (directBtnText) directBtnText.innerText = "REINTENTAR";
+                setTimeout(() => { 
+                    if (directBtnText) directBtnText.innerText = originalDirectText;
+                }, 2000);
+            });
+        }
+
+        // Descarga del evento en formato iCalendar (.ics) nativo para Apple/Google
+        function downloadCalendarEvent() {
+            const guestName = localRSVPData ? localRSVPData.name : 'Invitado';
+            
+            const icsMsg = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//AllStar18//AngelAlejandro//ES',
+                'BEGIN:VEVENT',
+                'UID:' + Date.now() + '@angel18.event',
+                'DTSTART:20260815T230000Z', // Sábado 15 de Agosto 2026 17:00 PM CST (Hora del Centro de México UTC-6)
+                'DTEND:20260816T050000Z',
+                'SUMMARY:🏀 ALL-STAR GAME 18 - Ángel Alejandro',
+                'DESCRIPTION:Tu Pase Especial VIP para la gran noche de Ángel Alejandro Villegas. Presenta este evento en la entrada.',
+                'LOCATION:Salón de eventos sociales Partenón\\, Av. John F. Kennedy Mz. 30 Lt. 26\\, Col. Emiliano Zapata 2a Sección\\, C.P. 55270\\, Ecatepec\\, Estado de México.',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\n');
+            
+            const blob = new Blob([icsMsg], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'AllStar18_Angel_Alejandro.ics';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ================= STREAMING_CHUNK: Lógica de Panel de Acceso de Anfitrión =================
+
+        // Abrir modal de PIN
+        function openHostModal() {
+            initAudio();
+            pinInput = "";
+            updatePinDots();
+            document.getElementById('host-pin-modal').classList.remove('hidden');
+        }
+
+        // Cerrar modal de PIN
+        function closeHostModal() {
+            document.getElementById('host-pin-modal').classList.add('hidden');
+        }
+
+        // Procesar dígitos en el teclado numérico iOS Style
+        function pressPinKey(digit) {
+            if (pinInput.length < 4) {
+                pinInput += digit;
+                playBounceSound();
+                updatePinDots();
+                
+                // Verificar PIN inmediatamente al llegar a 4 dígitos
+                if (pinInput.length === 4) {
+                    setTimeout(() => {
+                        if (pinInput === correctPIN) {
+                            playScanSuccessSound();
+                            closeHostModal();
+                            openHostPanel();
+                        } else {
+                            playScanErrorSound();
+                            pinInput = "";
+                            updatePinDots();
+                            
+                            // Efecto visual de vibración de error en los puntos de PIN
+                            const dots = document.getElementById('host-pin-modal').querySelector('.flex');
+                            dots.classList.add('animate-bounce');
+                            setTimeout(() => {
+                                dots.classList.remove('animate-bounce');
+                            }, 400);
+                        }
+                    }, 200);
+                }
+            }
+        }
+
+        function deleteLastPinKey() {
+            if (pinInput.length > 0) {
+                pinInput = pinInput.slice(0, -1);
+                playBounceSound();
+                updatePinDots();
+            }
+        }
+
+        function updatePinDots() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`pin-dot-${i}`);
+                if (i <= pinInput.length) {
+                    dot.className = "w-3.5 h-3.5 rounded-full border border-court-orange bg-court-orange transition-all scale-110";
+                } else {
+                    dot.className = "w-3.5 h-3.5 rounded-full border border-white/20 bg-transparent transition-all";
+                }
+            }
+        }
+
+        // ================= STREAMING_CHUNK: Lógica del Panel de Control de Anfitrión =================
+
+        // Abrir panel principal
+        function openHostPanel() {
+            document.getElementById('host-panel-screen').classList.remove('hidden');
+            switchHostTab('scanner');
+            renderRosterList();
+            updateHostPanelStats();
+        }
+
+        function closeHostPanel() {
+            stopScanning();
+            document.getElementById('host-panel-screen').classList.add('hidden');
+        }
+
+        // Alternar pestañas en el panel de control
+        function switchHostTab(tab) {
+            const secScanner = document.getElementById('host-sec-scanner');
+            const secRoster = document.getElementById('host-sec-roster');
+            const btnScanner = document.getElementById('tab-btn-scanner');
+            const btnRoster = document.getElementById('tab-btn-roster');
+
+            if (tab === 'scanner') {
+                secScanner.classList.remove('hidden');
+                secRoster.classList.add('hidden');
+                btnScanner.className = "flex-1 py-3 text-center border-b-2 border-court-orange text-xs font-athletic font-bold text-court-orange transition-all flex items-center justify-center gap-2";
+                btnRoster.className = "flex-1 py-3 text-center border-b-2 border-transparent text-slate-400 text-xs font-athletic font-bold hover:text-white transition-all flex items-center justify-center gap-2";
+                startScanning();
+            } else {
+                secScanner.classList.add('hidden');
+                secRoster.classList.remove('hidden');
+                btnScanner.className = "flex-1 py-3 text-center border-b-2 border-transparent text-slate-400 text-xs font-athletic font-bold hover:text-white transition-all flex items-center justify-center gap-2";
+                btnRoster.className = "flex-1 py-3 text-center border-b-2 border-court-orange text-xs font-athletic font-bold text-court-orange transition-all flex items-center justify-center gap-2";
+                stopScanning();
+                renderRosterList();
+            }
+        }
+
+        // Actualizar estadísticas del Dashboard en vivo
+        function updateHostPanelStats() {
+            const totalAssisting = rsvpsDatabase.filter(x => x.attendance === 'yes').length;
+            const totalCompanions = rsvpsDatabase.filter(x => x.attendance === 'yes').reduce((sum, x) => sum + (parseInt(x.guests) || 0), 0);
+            const totalCheckIn = rsvpsDatabase.filter(x => x.checkIn === true).length;
+            
+            document.getElementById('stat-attendance-count').innerText = `${totalAssisting}/${rsvpsDatabase.length}`;
+            document.getElementById('stat-guests-count').innerText = totalCompanions;
+            document.getElementById('stat-checkin-count').innerText = totalCheckIn;
+            document.getElementById('roster-badge-count').innerText = rsvpsDatabase.length;
+        }
+
+        // Cargar registros de prueba (Demo data) para poder probar el escaneo y lista
+        function loadDemoRSVPs() {
+            const demoList = [
+                { name: "Michael Jordan", email: "mj@bulls.com", attendance: "yes", guests: "2", message: "¡Felices 18 Ángel! Sigue encestando de tres en la vida.", checkIn: false },
+                { name: "Kobe Bryant", email: "mamba@lakers.com", attendance: "yes", guests: "0", message: "Mamba Mentality. Felicidades en tu Draft de la adultez.", checkIn: true },
+                { name: "LeBron James", email: "theking@cavs.com", attendance: "yes", guests: "4", message: "¡Disfruta mucho esta nueva temporada!", checkIn: false },
+                { name: "Stephen Curry", email: "chef@warriors.com", attendance: "no", guests: "0", message: "Lamento perderme el juego, ¡abrazos!", checkIn: false }
+            ];
+
+            // Combinar con los existentes sin duplicar correos
+            demoList.forEach(demo => {
+                if (!rsvpsDatabase.some(x => x.email.toLowerCase() === demo.email.toLowerCase())) {
+                    rsvpsDatabase.push(demo);
+                }
+            });
+
+            saveDatabase();
+            renderRosterList();
+            document.getElementById('demo-notice').classList.add('hidden');
+        }
+
+        // ================= STREAMING_CHUNK: Implementando Roster List Interactiva =================
+
+        // Renderizar lista interactiva del Roster
+        function renderRosterList() {
+            const container = document.getElementById('roster-list-container');
+            container.innerHTML = "";
+
+            if (rsvpsDatabase.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-slate-500">
+                        <i class="fa-solid fa-users-slash text-3xl mb-3 block"></i>
+                        <p class="text-xs">No hay invitados registrados aún.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            rsvpsDatabase.forEach((guest, index) => {
+                // Estatus visuales
+                const isConfirmed = guest.attendance === 'yes';
+                const hasCheckedIn = guest.checkIn === true;
+
+                const card = document.createElement('div');
+                card.className = "bg-white/5 border border-white/5 rounded-2xl p-4 flex justify-between items-center gap-3 hover:bg-white/10 transition-all";
+                card.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h4 class="font-bold text-xs text-white truncate text-left">${guest.name}</h4>
+                            <span class="text-[8px] font-bold px-2 py-0.5 rounded-full ${isConfirmed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}">
+                                ${isConfirmed ? 'Sí' : 'No'}
+                            </span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 truncate text-left">${guest.email}</p>
+                        <p class="text-[9px] text-slate-500 mt-1 text-left">
+                            <i class="fa-solid fa-user-group text-court-orange"></i> Acompañantes: <strong class="text-white">${guest.guests}</strong>
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <!-- Check In Toggle -->
+                        <button onclick="toggleGuestCheckIn(${index})" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all ${hasCheckedIn ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10'}" title="${hasCheckedIn ? 'Admitido (Desmarcar)' : 'Marcar Ingreso'}">
+                            <i class="fa-solid fa-check text-sm"></i>
+                        </button>
+                        <!-- Eliminar registro -->
+                        <button onclick="deleteGuestFromRoster(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-all" title="Eliminar Registro">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Filtrar lista de Roster en vivo
+        function filterRoster() {
+            const query = document.getElementById('roster-search').value.toLowerCase().trim();
+            const cards = document.getElementById('roster-list-container').children;
+
+            rsvpsDatabase.forEach((guest, index) => {
+                const card = cards[index];
+                if (!card) return;
+                
+                const matchesName = guest.name.toLowerCase().includes(query);
+                const matchesEmail = guest.email.toLowerCase().includes(query);
+
+                if (matchesName || matchesEmail) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // Alternar CheckIn de Invitado desde la lista
+        function toggleGuestCheckIn(index) {
+            initAudio();
+            rsvpsDatabase[index].checkIn = !rsvpsDatabase[index].checkIn;
+            if (rsvpsDatabase[index].checkIn) {
+                playScanSuccessSound();
+            } else {
+                playBounceSound();
+            }
+            saveDatabase();
+            renderRosterList();
+        }
+
+        // Eliminar invitado del roster
+        function deleteGuestFromRoster(index) {
+            initAudio();
+            playScanErrorSound();
+            rsvpsDatabase.splice(index, 1);
+            saveDatabase();
+            renderRosterList();
+        }
+
+        // ================= STREAMING_CHUNK: Integrando Escáner de Cámara HTML5-QRCODE =================
+
+        // Iniciar flujo del Escáner QR usando la Cámara Trasera
+        function startScanning() {
+            const scannerStatusEl = document.getElementById('scanner-status');
+            
+            if (html5QrCode && html5QrCode.isScanning) {
+                return;
+            }
+
+            scannerStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse"></span> Iniciando Cámara...`;
+            
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length > 0) {
+                    html5QrCode = new Html5Qrcode("reader");
+                    
+                    // Preferir cámara trasera ('environment') si está disponible
+                    const config = { fps: 15, qrbox: { width: 220, height: 220 } };
+                    
+                    html5QrCode.start(
+                        { facingMode: "environment" },
+                        config,
+                        onScanSuccessResult,
+                        onScanErrorResult
+                    ).then(() => {
+                        scannerStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span> Escáner Activo`;
+                        scannerStatusEl.className = "text-xs text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20";
+                    }).catch(err => {
+                        console.error("No se pudo iniciar el escáner:", err);
+                        scannerStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Error de inicio`;
+                        scannerStatusEl.className = "text-xs text-red-400 flex items-center gap-1.5 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20";
+                    });
+                } else {
+                    scannerStatusEl.innerText = "No se encontraron cámaras";
+                }
+            }).catch(err => {
+                console.error("Error al obtener cámaras:", err);
+                scannerStatusEl.innerText = "Error de permisos de cámara";
+            });
+        }
+
+        function stopScanning() {
+            const scannerStatusEl = document.getElementById('scanner-status');
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    scannerStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-500 inline-block"></span> Escáner Apagado`;
+                    scannerStatusEl.className = "text-xs text-slate-400 flex items-center gap-1.5 bg-white/5 px-3 py-1 rounded-full border border-white/5";
+                }).catch(err => console.error("Error al detener cámara:", err));
+            }
+        }
+
+        // ================= STREAMING_CHUNK: Procesando los Resultados de Escaneo =================
+
+        // Callback de éxito del escáner QR
+        function onScanSuccessResult(decodedText, decodedResult) {
+            initAudio();
+            stopScanning();
+
+            try {
+                const qrData = JSON.parse(decodedText);
+                
+                // Buscar si este invitado existe en el roster local
+                let matchedGuest = rsvpsDatabase.find(x => x.email.toLowerCase() === qrData.correo.toLowerCase());
+                
+                if (matchedGuest) {
+                    activeScanResultGuest = matchedGuest;
+                    openScanResultModal(matchedGuest, "REGISTRADO");
+                } else {
+                    // Si no existe, creamos un registro dinámico temporal a partir del QR escaneado
+                    const newGuest = {
+                        name: qrData.nombre || "Invitado QR Desconocido",
+                        email: qrData.correo || "N/A",
+                        attendance: qrData.asistencia === "CONFIRMADO" ? "yes" : "no",
+                        guests: qrData.acompanantes || 0,
+                        message: qrData.mensaje || "",
+                        checkIn: false,
+                        tempId: qrData.id
+                    };
+                    activeScanResultGuest = newGuest;
+                    openScanResultModal(newGuest, "NUEVO_REGISTRO_QR");
+                }
+            } catch (e) {
+                // Escaneo inválido o formato incorrecto (Ej. URL ordinaria)
+                console.warn("QR no cumple especificación de formato:", decodedText);
+                playScanErrorSound();
+                showInvalidQRModal(decodedText);
+            }
+        }
+
+        function onScanErrorResult(errorMessage) {
+            // Callback silencioso para evitar sobrecarga de logs
+        }
+
+        // Abrir ventana emergente de validación de pase escaneado
+        function openScanResultModal(guest, mode) {
+            const modal = document.getElementById('scan-result-modal');
+            const card = document.getElementById('scan-result-card');
+            const iconContainer = document.getElementById('scan-result-icon-container');
+            const icon = document.getElementById('scan-result-icon');
+            const badge = document.getElementById('scan-result-badge');
+            const actionBtn = document.getElementById('scan-action-btn');
+
+            // Actualizar campos de texto en el modal
+            document.getElementById('scan-result-title').innerText = guest.name.toUpperCase();
+            document.getElementById('scan-result-email').innerText = guest.email;
+            document.getElementById('scan-result-id').innerText = guest.tempId || `ANGEL-0815-${Math.abs(guest.name.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)).toString(36).substring(0, 5).toUpperCase()}`;
+            document.getElementById('scan-result-guests').innerText = guest.guests;
+            document.getElementById('scan-result-zone').innerText = guest.attendance === 'yes' ? (parseInt(guest.guests) > 0 ? "PREFERENTE PLATINO" : "VIP - DUELA PREMIUM") : "NINGUNA";
+            document.getElementById('scan-result-seat').innerText = guest.attendance === 'yes' ? (parseInt(guest.guests) > 0 ? `BUTACAS GRUPALES` : "ASIENTO A-18") : "SIN ACCESO";
+            document.getElementById('scan-result-message').innerText = guest.message ? `"${guest.message}"` : "Sin mensaje de felicitación.";
+
+            // Configurar diseño de acuerdo a su estado de ingreso previo
+            if (guest.checkIn) {
+                // YA INGRESADO (ADVERTENCIA / DUPLICADO)
+                playScanErrorSound();
+                card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-amber-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
+                iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-400 bg-amber-500/10";
+                icon.className = "fa-solid fa-triangle-exclamation";
+                badge.innerText = "PASE DUPLICADO / YA ADMITIDO";
+                badge.className = "font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                
+                actionBtn.innerText = "CANCELAR INGRESO";
+                actionBtn.className = "flex-1 bg-amber-500 hover:bg-amber-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all";
+            } else if (guest.attendance === 'no') {
+                // PASE INACTIVO / DECLINADO
+                playScanErrorSound();
+                card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-red-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
+                iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-400 bg-red-500/10";
+                icon.className = "fa-solid fa-ban";
+                badge.innerText = "BAJA DE ROSTER (CANCELADO)";
+                badge.className = "font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block bg-red-500/10 text-red-400 border border-red-500/20";
+                
+                actionBtn.innerText = "FORZAR INGRESO";
+                actionBtn.className = "flex-1 bg-red-500 hover:bg-red-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all";
+            } else {
+                // PASE VÁLIDO / ÉXITO
+                playScanSuccessSound();
+                card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-emerald-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
+                iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400 bg-emerald-500/10";
+                icon.className = "fa-solid fa-circle-check";
+                badge.innerText = "PASE VIP VÁLIDO";
+                badge.className = "font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                
+                actionBtn.innerText = "REGISTRAR ENTRADA";
+                actionBtn.className = "flex-1 bg-emerald-500 hover:bg-emerald-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all";
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeScanResultModal() {
+            document.getElementById('scan-result-modal').classList.add('hidden');
+            activeScanResultGuest = null;
+            // Reactivar el escaneo automático al cerrar modal de estatus
+            startScanning();
+        }
+
+        // Alternar el estatus desde el modal del escáner
+        function toggleGuestCheckInFromModal() {
+            if (!activeScanResultGuest) return;
+
+            // Buscar en roster existente
+            let localIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === activeScanResultGuest.email.toLowerCase());
+            
+            if (localIndex >= 0) {
+                rsvpsDatabase[localIndex].checkIn = !rsvpsDatabase[localIndex].checkIn;
+            } else {
+                // Si se escaneó un registro válido que no estaba local, lo admitimos agregándolo
+                activeScanResultGuest.checkIn = true;
+                rsvpsDatabase.push(activeScanResultGuest);
+            }
+
+            saveDatabase();
+            renderRosterList();
+            closeScanResultModal();
+        }
+
+        // Modal informativo para códigos QR que no siguen la estructura JSON del pase
+        function showInvalidQRModal(rawText) {
+            const modal = document.getElementById('scan-result-modal');
+            const card = document.getElementById('scan-result-card');
+            const iconContainer = document.getElementById('scan-result-icon-container');
+            const icon = document.getElementById('scan-result-icon');
+            const badge = document.getElementById('scan-result-badge');
+            const actionBtn = document.getElementById('scan-action-btn');
+
+            document.getElementById('scan-result-title').innerText = "QR INVÁLIDO";
+            document.getElementById('scan-result-email').innerText = "Estructura no compatible";
+            document.getElementById('scan-result-id').innerText = "N/A";
+            document.getElementById('scan-result-guests').innerText = "0";
+            document.getElementById('scan-result-zone').innerText = "NINGUNA";
+            document.getElementById('scan-result-seat').innerText = "SIN ACCESO";
+            document.getElementById('scan-result-message').innerText = rawText || "El código escaneado no contiene la firma digital del juego.";
+
+            card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-red-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
+            iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 bg-red-500/10";
+            icon.className = "fa-solid fa-triangle-exclamation";
+            badge.innerText = "FALLO DE FIRMA QR";
+            badge.className = "font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block bg-red-500/10 text-red-500 border border-red-500/20";
+            
+            actionBtn.innerText = "IGNORAR";
+            actionBtn.className = "flex-1 bg-white/5 border border-white/10 text-slate-400 font-bold text-xs py-3 px-4 rounded-xl transition-all";
+            actionBtn.onclick = closeScanResultModal;
+
+            modal.classList.remove('hidden');
+        }
+
+        // ================= STREAMING_CHUNK: Código del Juego Baloncesto 2D =================
+        let canvas, ctx;
+        let gameScore = 0;
+        let gameHighscore = 0;
+        let scoredThisThrow = false;
+        
+        let ball = {
+            x: 0,
+            y: 0,
+            radius: 13,
+            vx: 0,
+            vy: 0,
+            isThrown: false,
+            isDragging: false,
+            startY: 0,
+            startX: 0
+        };
+
+        let hoop = {
+            x: 0,
+            y: 0,
+            width: 44,
+            height: 6,
+            backboardWidth: 6,
+            backboardHeight: 38
+        };
+
+        function setupBasketballGame() {
+            canvas = document.getElementById('basketball-canvas');
+            ctx = canvas.getContext('2d');
+            
+            const savedHigh = localStorage.getItem('angel_hoop_high_v2');
+            if (savedHigh) {
+                gameHighscore = parseInt(savedHigh);
+                document.getElementById('game-highscore').innerText = gameHighscore;
+            }
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Controladores de eventos del juego coordinados para dispositivos táctiles
+            canvas.addEventListener('mousedown', dragStart);
+            canvas.addEventListener('mousemove', dragMove);
+            canvas.addEventListener('mouseup', dragEnd);
+
+            canvas.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                dragStart({
+                    clientX: touch.clientX,
+                    clientY: touch.clientY,
+                    preventDefault: () => e.preventDefault()
+                });
+            }, { passive: false });
+
+            canvas.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                dragMove({
+                    clientX: touch.clientX,
+                    clientY: touch.clientY,
+                    preventDefault: () => e.preventDefault()
+                });
+            }, { passive: false });
+
+            canvas.addEventListener('touchend', (e) => {
+                dragEnd();
+            });
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function resizeCanvas() {
+            if (!canvas || !canvas.parentNode) return;
+            const rect = canvas.parentNode.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            hoop.x = canvas.width / 2;
+            hoop.y = canvas.height * 0.28;
+            hoop.width = canvas.width * 0.15;
+            
+            resetBall();
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height * 0.85;
+            ball.vx = 0;
+            ball.vy = 0;
+            ball.isThrown = false;
+            ball.isDragging = false;
+        }
+
+        function resetGame() {
+            gameScore = 0;
+            document.getElementById('game-score').innerText = gameScore;
+            resetBall();
+        }
+
+        function dragStart(e) {
+            if (ball.isThrown) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            
+            const dist = Math.hypot(clickX - ball.x, clickY - ball.y);
+            if (dist < ball.radius * 2.8) {
+                ball.isDragging = true;
+                ball.startX = clickX;
+                ball.startY = clickY;
+                
+                document.getElementById('game-instruction').style.opacity = '0';
+                document.getElementById('game-instruction').style.pointerEvents = 'none';
+            }
+        }
+
+        function dragMove(e) {
+            if (!ball.isDragging) return;
+            if (e.preventDefault) e.preventDefault();
+            
+            const rect = canvas.getBoundingClientRect();
+            ball.x = e.clientX - rect.left;
+            ball.y = e.clientY - rect.top;
+        }
+
+        function dragEnd() {
+            if (!ball.isDragging) return;
+            ball.isDragging = false;
+            
+            const dx = ball.startX - ball.x;
+            const dy = ball.startY - ball.y;
+            
+            if (dy > 12) {
+                ball.vx = -dx * 0.14;
+                ball.vy = -dy * 0.15;
+                ball.isThrown = true;
+                playBounceSound();
+            } else {
+                resetBall();
+            }
+        }
+
+        function gameLoop() {
+            updatePhysics();
+            drawGame();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updatePhysics() {
+            if (!ball.isThrown) return;
+            
+            ball.vy += 0.32; // Gravedad suave
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+            
+            ball.vx *= 0.996;
+            ball.vy *= 0.996;
+
+            const rimLeft = hoop.x - hoop.width / 2;
+            const rimRight = hoop.x + hoop.width / 2;
+            const rimY = hoop.y;
+
+            // Rebote con paredes
+            if (ball.x - ball.radius < 0) {
+                ball.x = ball.radius;
+                ball.vx = -ball.vx * 0.55;
+                playBounceSound();
+            } else if (ball.x + ball.radius > canvas.width) {
+                ball.x = canvas.width - ball.radius;
+                ball.vx = -ball.vx * 0.55;
+                playBounceSound();
+            }
+
+            // Rebote del tablero
+            const backboardX = rimRight + 10;
+            const backboardTop = hoop.y - 42;
+            const backboardBottom = hoop.y + 12;
+            
+            if (ball.x + ball.radius >= backboardX && ball.x - ball.radius <= backboardX + hoop.backboardWidth &&
+                ball.y >= backboardTop && ball.y <= backboardBottom) {
+                ball.vx = -Math.abs(ball.vx) * 0.65;
+                ball.x = backboardX - ball.radius - 1;
+                playBounceSound();
+            }
+
+            // Rebote con aro izquierdo
+            const distToLeftRim = Math.hypot(ball.x - rimLeft, ball.y - rimY);
+            if (distToLeftRim < ball.radius + 3) {
+                const angle = Math.atan2(ball.y - rimY, ball.x - rimLeft);
+                ball.vx = Math.cos(angle) * 4.5;
+                ball.vy = Math.sin(angle) * 4.5;
+                playBounceSound();
+            }
+
+            // Rebote con aro derecho
+            const distToRightRim = Math.hypot(ball.x - rimRight, ball.y - rimY);
+            if (distToRightRim < ball.radius + 3) {
+                const angle = Math.atan2(ball.y - rimY, ball.x - rimRight);
+                ball.vx = Math.cos(angle) * 4.5;
+                ball.vy = Math.sin(angle) * 4.5;
+                playBounceSound();
+            }
+
+            // Detección de canasta limpia (Swish)
+            if (!scoredThisThrow && ball.vy > 0 && 
+                ball.x > rimLeft && ball.x < rimRight && 
+                ball.y - ball.radius <= rimY + 5 && ball.y + ball.radius >= rimY - 5) {
+                
+                gameScore++;
+                scoredThisThrow = true;
+                document.getElementById('game-score').innerText = gameScore;
+                
+                playSwishSound();
+
+                if (gameScore > gameHighscore) {
+                    gameHighscore = gameScore;
+                    document.getElementById('game-highscore').innerText = gameHighscore;
+                    localStorage.setItem('angel_hoop_high_v2', gameHighscore);
+                }
+
+                // Efecto de marcador de Apple
+                document.getElementById('game-score').classList.add('scale-125', 'text-amber-400');
+                setTimeout(() => {
+                    document.getElementById('game-score').classList.remove('scale-125', 'text-amber-400');
+                }, 400);
+
+                if (gameScore === 18) {
+                    showAllStarBadgeMessage();
+                }
+            }
+
+            if (ball.y - ball.radius > canvas.height) {
+                scoredThisThrow = false;
+                resetBall();
+            }
+        }
+
+        function showAllStarBadgeMessage() {
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.5 }
+            });
+
+            const overlay = document.createElement('div');
+            overlay.className = "fixed inset-0 bg-[#020205]/95 z-50 flex flex-col justify-center items-center p-6 text-center";
+            overlay.innerHTML = `
+                <div class="w-20 h-20 bg-gradient-to-tr from-court-orange to-amber-500 rounded-full flex items-center justify-center text-black text-4xl mb-5 shadow-2xl shadow-court-orange/30">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h3 class="font-athletic font-black text-2xl text-white text-center">¡MAMBA MENTALITY ACTIVADA!</h3>
+                <p class="font-bold text-court-orange text-sm tracking-wider uppercase mt-1 text-center">LOGRASTE EL RÉCORD DE LOS 18 TIROS</p>
+                <p class="text-[11px] text-slate-400 max-w-xs mt-3 leading-relaxed text-center">
+                    Has desbloqueado el pase Clase de Honor All-Star. ¡Toma captura y muéstralo en la entrada del evento!
+                </p>
+                <button onclick="this.parentElement.remove()" class="mt-6 bg-white hover:bg-slate-100 text-black font-athletic font-extrabold py-3 px-8 rounded-xl transition-all">
+                    VOLVER A LA ARENA
+                </button>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar diseño de media cancha
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, hoop.y, canvas.height * 0.45, 0, Math.PI);
+            ctx.stroke();
+
+            // Dibujar tablero posterior
+            const rimRight = hoop.x + hoop.width / 2;
+            const backboardX = rimRight + 10;
+            const backboardTop = hoop.y - 42;
+            
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(backboardX + hoop.backboardWidth, hoop.y);
+            ctx.lineTo(canvas.width, hoop.y + 8);
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.fillRect(backboardX, backboardTop, hoop.backboardWidth, hoop.backboardHeight);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(backboardX, backboardTop, hoop.backboardWidth, hoop.backboardHeight);
+            
+            ctx.strokeStyle = '#FF5722';
+            ctx.strokeRect(backboardX, hoop.y - 22, hoop.backboardWidth, 16);
+
+            // Dibujar red
+            const rimLeft = hoop.x - hoop.width / 2;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 1.2;
+            const netHeight = 22;
+            ctx.beginPath();
+            for (let i = 0; i <= 5; i++) {
+                const ratio = i / 5;
+                const topX = rimLeft + hoop.width * ratio;
+                const bottomX = rimLeft + (hoop.width * 0.25) + (hoop.width * 0.5 * ratio);
+                ctx.moveTo(topX, hoop.y);
+                ctx.lineTo(bottomX, hoop.y + netHeight);
+            }
+            for (let j = 1; j <= 3; j++) {
+                const levelRatio = j / 3;
+                const netLevelY = hoop.y + netHeight * levelRatio;
+                const currentWidth = hoop.width - (hoop.width * 0.4 * levelRatio);
+                const startX = hoop.x - currentWidth / 2;
+                ctx.moveTo(startX, netLevelY);
+                ctx.lineTo(startX + currentWidth, netLevelY);
+            }
+            ctx.stroke();
+
+            // Dibujar aro de baloncesto
+            ctx.strokeStyle = '#FF5722';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.moveTo(rimLeft, hoop.y);
+            ctx.lineTo(rimRight, hoop.y);
+            ctx.stroke();
+
+            // Guía de arrastre para apuntar
+            if (ball.isDragging) {
+                ctx.strokeStyle = 'rgba(255, 87, 34, 0.35)';
+                ctx.lineWidth = 2.5;
+                ctx.setLineDash([4, 4]);
+                const pullDx = ball.startX - ball.x;
+                const pullDy = ball.startY - ball.y;
+                
+                ctx.beginPath();
+                ctx.moveTo(ball.startX, ball.startY);
+                ctx.lineTo(ball.startX + pullDx * 1.4, ball.startY + pullDy * 1.4);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Dibujar el balón
+            ctx.save();
+            ctx.translate(ball.x, ball.y);
+            if (ball.isThrown) {
+                ctx.rotate((ball.x / 18) % (Math.PI * 2));
+            }
+
+            const ballGrad = ctx.createRadialGradient(-2, -2, 2, 0, 0, ball.radius);
+            ballGrad.addColorStop(0, '#FFA726');
+            ballGrad.addColorStop(0.8, '#F57C00');
+            ballGrad.addColorStop(1, '#B26A00');
+            
+            ctx.fillStyle = ballGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, ball.radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = '#5D2500';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+
+            // Líneas negras clásicas del balón
+            ctx.strokeStyle = '#2E1100';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, -ball.radius);
+            ctx.lineTo(0, ball.radius);
+            ctx.moveTo(-ball.radius, 0);
+            ctx.lineTo(ball.radius, 0);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(-ball.radius * 0.9, 0, ball.radius * 0.7, -Math.PI/2.5, Math.PI/2.5);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(ball.radius * 0.9, 0, ball.radius * 0.7, Math.PI - Math.PI/2.5, Math.PI + Math.PI/2.5);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+    </script>
+</body>
+</html>
