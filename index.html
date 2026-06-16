@@ -10,8 +10,8 @@
     <title>ÁNGEL 18 - All Star Game Invitation</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium -->
-am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium (Enlace corregido) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Html2Canvas para exportar el pase a imágenes reales offline -->
@@ -670,11 +670,11 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
                             <div class="border-t-2 border-dashed border-white/10 h-[1px]"></div>
                         </div>
 
-                        <!-- Pie del Boleto / QR Dinámico sin contornos blancos exagerados -->
+                        <!-- Pie del Boleto / QR Dinámico (Diseño y posiciones blindadas contra desbordes) -->
                         <div class="p-5 bg-[#080a12] flex flex-col items-center justify-center space-y-3">
-                            <!-- QR con excelente visibilidad y relleno mínimo -->
-                            <div class="p-2 bg-white rounded-xl shadow-lg shadow-court-orange/5 flex items-center justify-center w-32 h-32 sm:w-36 sm:h-36">
-                                <canvas id="ticket-qr" class="block w-full h-full"></canvas>
+                            <!-- QR Wrapper con tamaño fijo e inamovible para garantizar que nunca se deforme -->
+                            <div class="p-2 bg-white rounded-xl shadow-lg shadow-court-orange/5 flex items-center justify-center w-32 h-32 sm:w-36 sm:h-36 mx-auto overflow-hidden">
+                                <canvas id="ticket-qr" class="block w-full h-full object-contain" style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;"></canvas>
                             </div>
                             <div class="text-center space-y-1">
                                 <span id="ticket-id-label" class="text-[9px] text-slate-500 font-athletic tracking-[0.3em] block">ANGEL-08152026-XXXX</span>
@@ -850,16 +850,16 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
                 <!-- Tarjetas de Estadísticas Rápidas -->
                 <div class="grid grid-cols-3 gap-3">
                     <div class="bg-white/5 border border-white/5 rounded-2xl p-3 text-center">
-                        <span class="text-[9px] text-slate-400 block uppercase font-bold">Asistencia</span>
-                        <span id="stat-attendance-count" class="font-athletic font-black text-xl text-court-orange mt-0.5 block">0/0</span>
+                        <span class="text-[9px] text-slate-400 block uppercase font-bold text-center">Asistencia</span>
+                        <span id="stat-attendance-count" class="font-athletic font-black text-xl text-court-orange mt-0.5 block text-center">0/0</span>
                     </div>
                     <div class="bg-white/5 border border-white/5 rounded-2xl p-3 text-center">
-                        <span class="text-[9px] text-slate-400 block uppercase font-bold">Compañeros</span>
-                        <span id="stat-guests-count" class="font-athletic font-black text-xl text-amber-500 mt-0.5 block">0</span>
+                        <span class="text-[9px] text-slate-400 block uppercase font-bold text-center">Compañeros</span>
+                        <span id="stat-guests-count" class="font-athletic font-black text-xl text-amber-500 mt-0.5 block text-center">0</span>
                     </div>
                     <div class="bg-white/5 border border-white/5 rounded-2xl p-3 text-center">
-                        <span class="text-[9px] text-slate-400 block uppercase font-bold">Checked-In</span>
-                        <span id="stat-checkin-count" class="font-athletic font-black text-xl text-emerald-400 mt-0.5 block">0</span>
+                        <span class="text-[9px] text-slate-400 block uppercase font-bold text-center">Checked-In</span>
+                        <span id="stat-checkin-count" class="font-athletic font-black text-xl text-emerald-400 mt-0.5 block text-center">0</span>
                     </div>
                 </div>
 
@@ -892,18 +892,40 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
 
             <!-- PANEL SECCIÓN 2: ROSTER DE INVITADOS -->
             <div id="host-sec-roster" class="hidden space-y-4">
-                <!-- Barra de búsqueda e ingreso manual rápido -->
+                <!-- Buscador, simulador y agregador manual rápido -->
                 <div class="space-y-3">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                         <input type="text" id="roster-search" oninput="filterRoster()" placeholder="Buscar por nombre o correo..." class="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-court-orange transition-all">
                     </div>
+
+                    <!-- Agregar Invitado Manualmente -->
+                    <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-3">
+                        <p class="text-[10px] text-court-orange font-bold uppercase tracking-wider text-left">Agregar Invitado Manualmente</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="manual-guest-name" placeholder="Nombre completo..." class="bg-black/60 border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:border-court-orange text-white">
+                            <input type="email" id="manual-guest-email" placeholder="Correo electrónico..." class="bg-black/60 border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:border-court-orange text-white">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="manual-guest-guests" class="bg-black/60 border border-white/10 rounded-lg p-2 text-xs focus:outline-none text-slate-300">
+                                <option value="0">Sin acompañantes</option>
+                                <option value="1">1 Acompañante</option>
+                                <option value="2">2 Acompañantes</option>
+                                <option value="3">3 Acompañantes</option>
+                                <option value="4">4 Acompañantes</option>
+                                <option value="5">5 Acompañantes</option>
+                            </select>
+                            <button onclick="addManualGuest()" class="bg-white text-black font-athletic font-black rounded-lg text-xs py-2 hover:bg-slate-100 transition-all">
+                                REGISTRAR JUGADOR
+                            </button>
+                        </div>
+                    </div>
                     
                     <!-- Botón para simular datos demo en local -->
                     <div id="demo-notice" class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex justify-between items-center">
                         <div>
-                            <p class="text-[10px] text-amber-500 font-bold uppercase tracking-wider">MODO SIMULADOR</p>
-                            <p class="text-[9px] text-slate-400 mt-0.5">Carga registros demo para validar el escáner.</p>
+                            <p class="text-[10px] text-amber-500 font-bold uppercase tracking-wider text-left">MODO SIMULADOR</p>
+                            <p class="text-[9px] text-slate-400 mt-0.5 text-left">Carga registros demo para validar el escáner.</p>
                         </div>
                         <button onclick="loadDemoRSVPs()" class="bg-amber-500 hover:bg-amber-600 text-black text-[10px] font-bold py-1 px-2.5 rounded-lg transition-all active:scale-95">
                             Cargar Demo
@@ -942,27 +964,27 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
             <div class="space-y-3.5 text-left bg-white/5 border border-white/5 rounded-2xl p-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <span class="text-[9px] text-slate-500 block uppercase font-bold">ID TICKET</span>
-                        <span id="scan-result-id" class="text-xs text-white font-mono mt-0.5 block truncate">ANGEL-0815-XXXX</span>
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold text-left">ID TICKET</span>
+                        <span id="scan-result-id" class="text-xs text-white font-mono mt-0.5 block truncate text-left">ANGEL-0815-XXXX</span>
                     </div>
                     <div>
-                        <span class="text-[9px] text-slate-500 block uppercase font-bold">ACOMPAÑANTES</span>
-                        <span id="scan-result-guests" class="text-xs text-white font-bold mt-0.5 block">0</span>
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold text-left">ACOMPAÑANTES</span>
+                        <span id="scan-result-guests" class="text-xs text-white font-bold mt-0.5 block text-left">0</span>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <span class="text-[9px] text-slate-500 block uppercase font-bold">ZONA</span>
-                        <span id="scan-result-zone" class="text-xs text-court-orange font-bold mt-0.5 block truncate">DUELA VIP</span>
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold text-left">ZONA</span>
+                        <span id="scan-result-zone" class="text-xs text-court-orange font-bold mt-0.5 block truncate text-left">DUELA VIP</span>
                     </div>
                     <div>
-                        <span class="text-[9px] text-slate-500 block uppercase font-bold">ASIENTO</span>
-                        <span id="scan-result-seat" class="text-xs text-white mt-0.5 block truncate">A-18</span>
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold text-left">ASIENTO</span>
+                        <span id="scan-result-seat" class="text-xs text-white mt-0.5 block truncate text-left">A-18</span>
                     </div>
                 </div>
                 <div class="border-t border-white/5 pt-2.5">
-                    <span class="text-[9px] text-slate-500 block uppercase font-bold">MENSAJE A ÁNGEL</span>
-                    <p id="scan-result-message" class="text-[11px] text-slate-400 mt-0.5 leading-relaxed italic">"Sin mensaje escrito..."</p>
+                    <span class="text-[9px] text-slate-500 block uppercase font-bold text-left">MENSAJE A ÁNGEL</span>
+                    <p id="scan-result-message" class="text-[11px] text-slate-400 mt-0.5 leading-relaxed italic text-left">"Sin mensaje escrito..."</p>
                 </div>
             </div>
 
@@ -985,7 +1007,7 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
         let activeSlideIndex = 0;
         const totalSlides = 6;
         
-        // Base de Datos Unificada de Invitados (Simulador Local si Firebase no está configurado)
+        // Base de Datos Unificada de Invitados (Simulador Local)
         let rsvpsDatabase = [];
         let html5QrCode = null;
         let pinInput = "";
@@ -1098,18 +1120,18 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
             } catch(e) {}
         }
 
-        // Inicializador general de ventana
+        // Inicializador general de ventana (Orden de carga corregido para evitar la pérdida de registros)
         window.onload = function() {
             initCountdown();
-            loadLocalRSVP();
+            loadInitialDatabase(); // 1. Primero cargamos la base de datos completa de invitados
+            loadLocalRSVP();       // 2. Segundo, cargamos el RSVP local del navegador actual y sincronizamos
             setupBasketballGame();
             setupScrollTracker();
-            loadInitialDatabase();
         };
 
         // Cargar Base de datos local/simulada inicial
         function loadInitialDatabase() {
-            const stored = localStorage.getItem('angel18_guests_db_v2');
+            const stored = localStorage.getItem('angel18_guests_db_v3');
             if (stored) {
                 rsvpsDatabase = JSON.parse(stored);
             } else {
@@ -1120,7 +1142,7 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
 
         // Salvar Base de datos local
         function saveDatabase() {
-            localStorage.setItem('angel18_guests_db_v2', JSON.stringify(rsvpsDatabase));
+            localStorage.setItem('angel18_guests_db_v3', JSON.stringify(rsvpsDatabase));
             updateHostPanelStats();
         }
 
@@ -1267,6 +1289,15 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
                     updateTicketUI(localRSVPData);
                     unlockTicketAndScreen(false); // Desbloqueado sin transiciones en la carga inicial
                     showRSVPSuccessUI();
+                    
+                    // Sincronizar y forzar la inserción en la base de datos si por algún motivo no estaba registrada
+                    const existingIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === localRSVPData.email.toLowerCase());
+                    if (existingIndex >= 0) {
+                        rsvpsDatabase[existingIndex] = localRSVPData;
+                    } else {
+                        rsvpsDatabase.push(localRSVPData);
+                    }
+                    saveDatabase();
                 } catch(e) {
                     localStorage.removeItem('angel_18_rsvp_v2');
                 }
@@ -1311,7 +1342,7 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
             localStorage.setItem('angel_18_rsvp_v2', JSON.stringify(rsvpData));
             localRSVPData = rsvpData;
 
-            // 2. Insertar/Actualizar en la base de datos compartida (Simulador o Firebase)
+            // 2. Insertar/Actualizar en la base de datos compartida y salvar inmediatamente
             const existingIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
             if (existingIndex >= 0) {
                 rsvpsDatabase[existingIndex] = rsvpData;
@@ -1395,24 +1426,14 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
                 seatEl.innerText = asientoTexto;
                 companionEl.innerText = badgeTexto;
 
-                // Generación instantánea del código QR real con todos los metadatos requeridos por el anfitrión
-                const qrPayload = {
-                    id: ticketSerial,
-                    nombre: data.name,
-                    correo: data.email || 'N/A',
-                    asistencia: 'CONFIRMADO',
-                    acompanantes: companionsCount,
-                    total_pases: companionsCount + 1,
-                    zona: zonaTexto,
-                    asiento: asientoTexto,
-                    mensaje: data.message || '',
-                    evento: "ÁNGEL 18 ALL-STAR GAME 🏀"
-                };
+                // PROTOCOLO PIPELINE COMPACTO (Reduce drásticamente la densidad del QR para escaneos ultra veloces y sin fallos)
+                const safeMessage = (data.message || '').replace(/\|/g, ' ').replace(/\n/g, ' ');
+                const qrPayloadCompact = `ANGEL18|${ticketSerial}|${data.name}|${data.email || 'N/A'}|${companionsCount}|${zonaTexto}|${asientoTexto}|${safeMessage}`;
 
-                // Instanciar el QR sin margen blanco
+                // Instanciar el QR nítido de alta velocidad de lectura sin bordes internos inútiles
                 new QRious({
                     element: document.getElementById('ticket-qr'),
-                    value: JSON.stringify(qrPayload),
+                    value: qrPayloadCompact,
                     size: 200,
                     background: '#ffffff',
                     foreground: '#020205',
@@ -1433,24 +1454,12 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
                 seatEl.innerText = "SIN ACCESO AL RECINTO";
                 companionEl.innerText = "Baja de Plantel";
 
-                // Generación de payload de cancelación en QR
-                const qrPayloadCancel = {
-                    id: ticketSerial,
-                    nombre: data.name,
-                    correo: data.email || 'N/A',
-                    asistencia: 'BAJA DE EQUIPO / NO ASISTE',
-                    acompanantes: 0,
-                    total_pases: 0,
-                    zona: 'NINGUNO',
-                    asiento: 'SIN ACCESO',
-                    mensaje: data.message || '',
-                    evento: "ÁNGEL 18 ALL-STAR GAME 🏀"
-                };
+                const qrPayloadCancel = `ANGEL18|${ticketSerial}|${data.name}|${data.email || 'N/A'}|0|NINGUNO|SIN ACCESO|BAJA DE EQUIPO / NO ASISTE`;
 
                 // QR en blanco/bloqueado compacto
                 new QRious({
                     element: document.getElementById('ticket-qr'),
-                    value: JSON.stringify(qrPayloadCancel),
+                    value: qrPayloadCancel,
                     size: 200,
                     background: '#0c0e17',
                     foreground: '#3f3f46',
@@ -1458,6 +1467,43 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
                     padding: 0
                 });
             }
+        }
+
+        // Agregar invitado manualmente desde el panel del anfitrión
+        function addManualGuest() {
+            const name = document.getElementById('manual-guest-name').value.trim();
+            const email = document.getElementById('manual-guest-email').value.trim();
+            const guests = document.getElementById('manual-guest-guests').value;
+            
+            if (!name || !email) {
+                playScanErrorSound();
+                return;
+            }
+            
+            const rsvpData = {
+                name: name,
+                email: email,
+                attendance: 'yes',
+                guests: guests,
+                message: 'Agregado manualmente por el anfitrión.',
+                checkIn: false
+            };
+            
+            const existingIndex = rsvpsDatabase.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
+            if (existingIndex >= 0) {
+                rsvpsDatabase[existingIndex] = rsvpData;
+            } else {
+                rsvpsDatabase.push(rsvpData);
+            }
+            
+            saveDatabase();
+            renderRosterList();
+            playScanSuccessSound();
+            
+            // Limpiar campos de texto del formulario rápido
+            document.getElementById('manual-guest-name').value = '';
+            document.getElementById('manual-guest-email').value = '';
+            document.getElementById('manual-guest-guests').value = '0';
         }
 
         function showRSVPSuccessUI() {
@@ -1834,28 +1880,64 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
 
         // ================= STREAMING_CHUNK: Procesando los Resultados de Escaneo =================
 
-        // Callback de éxito del escáner QR
+        // Callback de éxito del escáner QR (Decodificación nítida del formato pipeline delimitado)
         function onScanSuccessResult(decodedText, decodedResult) {
             initAudio();
             stopScanning();
 
             try {
-                const qrData = JSON.parse(decodedText);
+                let qrData;
                 
-                // Buscar si este invitado existe en el roster local
+                // Intenta decodificar el formato pipeline de alto rendimiento
+                if (decodedText.startsWith('ANGEL18|')) {
+                    const parts = decodedText.split('|');
+                    qrData = {
+                        id: parts[1],
+                        nombre: parts[2],
+                        correo: parts[3],
+                        asistencia: parts[4] === '0' && parts[5] === 'NINGUNO' ? 'CANCELADO' : 'CONFIRMADO',
+                        acompanantes: parseInt(parts[4]) || 0,
+                        total_pases: (parseInt(parts[4]) || 0) + 1,
+                        zona: parts[5] || 'VIP',
+                        asiento: parts[6] || 'A-18',
+                        mensaje: parts[7] || ''
+                    };
+                } else {
+                    // Fallback de retrocompatibilidad con formato JSON
+                    const parsed = JSON.parse(decodedText);
+                    qrData = {
+                        id: parsed.id || parsed.serial || 'ANGEL-0815-MANUAL',
+                        nombre: parsed.nombre || parsed.invitado || 'N/A',
+                        correo: parsed.correo || parsed.email || 'N/A',
+                        asistencia: parsed.asistencia || (parsed.attendance === 'yes' ? 'CONFIRMADO' : 'CANCELADO'),
+                        acompanantes: parsed.acompanantes !== undefined ? parsed.acompanantes : (parsed.guests || 0),
+                        total_pases: parsed.total_pases || (parsed.asistentes || 1),
+                        zona: parsed.zona || 'VIP',
+                        asiento: parsed.asiento || parsed.acceso || 'A-18',
+                        mensaje: parsed.mensaje || parsed.message || ''
+                    };
+                }
+                
+                // Buscar si este invitado existe en el roster de la base de datos
                 let matchedGuest = rsvpsDatabase.find(x => x.email.toLowerCase() === qrData.correo.toLowerCase());
                 
                 if (matchedGuest) {
+                    // Sincronizar datos por si hubo algún cambio de último momento en el ticket físico
+                    matchedGuest.name = qrData.nombre;
+                    matchedGuest.guests = qrData.acompanantes.toString();
+                    matchedGuest.message = qrData.mensaje;
+                    matchedGuest.tempId = qrData.id;
+                    
                     activeScanResultGuest = matchedGuest;
                     openScanResultModal(matchedGuest, "REGISTRADO");
                 } else {
-                    // Si no existe, creamos un registro dinámico temporal a partir del QR escaneado
+                    // Si el invitado no estaba en la base de datos local pero tiene un QR válido, lo registramos dinámicamente
                     const newGuest = {
-                        name: qrData.nombre || "Invitado QR Desconocido",
-                        email: qrData.correo || "N/A",
-                        attendance: qrData.asistencia === "CONFIRMADO" ? "yes" : "no",
-                        guests: qrData.acompanantes || 0,
-                        message: qrData.mensaje || "",
+                        name: qrData.nombre,
+                        email: qrData.correo,
+                        attendance: qrData.asistencia === 'CONFIRMADO' ? 'yes' : 'no',
+                        guests: qrData.acompanantes.toString(),
+                        message: qrData.mensaje,
                         checkIn: false,
                         tempId: qrData.id
                     };
@@ -1863,7 +1945,7 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
                     openScanResultModal(newGuest, "NUEVO_REGISTRO_QR");
                 }
             } catch (e) {
-                // Escaneo inválido o formato incorrecto (Ej. URL ordinaria)
+                // Escaneo inválido o formato incorrecto (Ej. URL de internet ordinaria)
                 console.warn("QR no cumple especificación de formato:", decodedText);
                 playScanErrorSound();
                 showInvalidQRModal(decodedText);
@@ -1888,8 +1970,14 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
             document.getElementById('scan-result-email').innerText = guest.email;
             document.getElementById('scan-result-id').innerText = guest.tempId || `ANGEL-0815-${Math.abs(guest.name.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)).toString(36).substring(0, 5).toUpperCase()}`;
             document.getElementById('scan-result-guests').innerText = guest.guests;
-            document.getElementById('scan-result-zone').innerText = guest.attendance === 'yes' ? (parseInt(guest.guests) > 0 ? "PREFERENTE PLATINO" : "VIP - DUELA PREMIUM") : "NINGUNA";
-            document.getElementById('scan-result-seat').innerText = guest.attendance === 'yes' ? (parseInt(guest.guests) > 0 ? `BUTACAS GRUPALES` : "ASIENTO A-18") : "SIN ACCESO";
+            
+            // Asignación de zona idéntica para consistencia
+            const cCount = parseInt(guest.guests) || 0;
+            const computedZone = guest.attendance === 'yes' ? (cCount === 0 ? "VIP - DUELA PREMIUM" : (cCount <= 2 ? "PREFERENTE PLATINO" : (cCount <= 4 ? "PALCO MEDIA CANCHA" : "SUITE VIP EXECUTIVE"))) : "NINGUNA";
+            const computedSeat = guest.attendance === 'yes' ? (cCount === 0 ? "BUTACA A-18" : (cCount <= 2 ? `FILA C - BUTACAS 22-${22 + cCount}` : (cCount <= 4 ? `PALCO FAMILIAR SEC. F` : "SUITE ALL-STAR NUM. 18"))) : "SIN ACCESO";
+            
+            document.getElementById('scan-result-zone').innerText = computedZone;
+            document.getElementById('scan-result-seat').innerText = computedSeat;
             document.getElementById('scan-result-message').innerText = guest.message ? `"${guest.message}"` : "Sin mensaje de felicitación.";
 
             // Configurar diseño de acuerdo a su estado de ingreso previo
@@ -1958,7 +2046,7 @@ am/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=30
             closeScanResultModal();
         }
 
-        // Modal informativo para códigos QR que no siguen la estructura JSON del pase
+        // Modal informativo para códigos QR que no siguen la estructura JSON o Pipeline del pase
         function showInvalidQRModal(rawText) {
             const modal = document.getElementById('scan-result-modal');
             const card = document.getElementById('scan-result-card');
