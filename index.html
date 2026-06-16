@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#020205">
     <title>ÁNGEL 18 - All Star Game Invitation</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004fe471fdb2be8a70903b144a%26ts%3D494882%26p%3Dfs%26cid%3D1%26sig%3Dbd7adcb55cdd19a85ceef7252212d19587860f300347bdb683cb1e75f386d628%26v%3D0&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;name=Web%20of%20Trust&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000c8c071f899e48c0c392c60a4%26ts%3D494883%26p%3Dfs%26cid%3D1%26sig%3D4bf59f5d76bb6a79e2de84c4e525b9d8f4480d4467ccb437af0c5b12a03473a3%26v%3D0&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;name=Web%20of%20Trust&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -833,7 +833,7 @@
         <!-- Pestañas de control superior -->
         <div class="flex border-b border-white/5 bg-[#090b12]">
             <button onclick="switchHostTab('scanner')" id="tab-btn-scanner" class="flex-1 py-3 text-center border-b-2 border-court-orange text-xs font-athletic font-bold text-court-orange transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-qrcode"></i> ESCANEAR QR
+                <i class="fa-solid fa-qrcode"></i> ADMITIR QR
             </button>
             <button onclick="switchHostTab('roster')" id="tab-btn-roster" class="flex-1 py-3 text-center border-b-2 border-transparent text-slate-400 text-xs font-athletic font-bold hover:text-white transition-all flex items-center justify-center gap-2">
                 <i class="fa-solid fa-clipboard-list"></i> LISTA DE INVITADOS (<span id="roster-badge-count">0</span>)
@@ -890,7 +890,7 @@
 
             <!-- PANEL SECCIÓN 2: ROSTER DE INVITADOS -->
             <div id="host-sec-roster" class="hidden space-y-4">
-                <!-- Buscador, simulador y agregador manual rápido -->
+                <!-- Buscador y agregador manual rápido -->
                 <div class="space-y-3">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
@@ -919,16 +919,6 @@
                         </div>
                     </div>
                     
-                    <!-- Botón para simular datos demo en local -->
-                    <div id="demo-notice" class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] text-amber-500 font-bold uppercase tracking-wider text-left">MODO SIMULADOR</p>
-                            <p class="text-[9px] text-slate-400 mt-0.5 text-left">Carga registros demo para validar el escáner.</p>
-                        </div>
-                        <button onclick="loadDemoRSVPs()" class="bg-amber-500 hover:bg-amber-600 text-black text-[10px] font-bold py-1 px-2.5 rounded-lg transition-all active:scale-95">
-                            Cargar Demo
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Lista de Registrados -->
@@ -1910,27 +1900,6 @@
             document.getElementById('roster-badge-count').innerText = rsvpsDatabase.length;
         }
 
-        // Cargar registros de prueba (Demo data)
-        async function loadDemoRSVPs() {
-            const demoList = [
-                { name: "Michael Jordan", email: "mj@bulls.com", attendance: "yes", guests: "2", message: "¡Felices 18 Ángel! Sigue encestando de tres.", checkIn: false },
-                { name: "Kobe Bryant", email: "mamba@lakers.com", attendance: "yes", guests: "0", message: "Mamba Mentality. Felicidades.", checkIn: true },
-                { name: "LeBron James", email: "theking@cavs.com", attendance: "yes", guests: "4", message: "¡Disfruta mucho esta nueva temporada!", checkIn: false },
-                { name: "Stephen Curry", email: "chef@warriors.com", attendance: "no", guests: "0", message: "Lamento perderme el juego, ¡abrazos!", checkIn: false }
-            ];
-
-            for (const demo of demoList) {
-                try {
-                    await saveRSVPToCloud(demo);
-                } catch (error) {
-                    alert("No se pudieron cargar los registros demo en Firebase.");
-                    return;
-                }
-            }
-
-            document.getElementById('demo-notice').classList.add('hidden');
-        }
-
         // ================= STREAMING_CHUNK: Implementando Roster List Interactiva =================
 
         // Renderizar lista interactiva del Roster
@@ -2090,59 +2059,49 @@
             try {
                 let qrData;
                 
-                // Formato de pipeline
+                // Formato generado por el pase VIP: ANGEL18|ID|NOMBRE|CORREO|ACOMPAÑANTES|ZONA|ASIENTO|MENSAJE
                 if (decodedText.startsWith('ANGEL18|')) {
                     const parts = decodedText.split('|');
                     qrData = {
-                        id: parts[1],
-                        nombre: parts[2],
-                        correo: parts[3],
-                        asistencia: parts[4] === '0' && parts[5] === 'NINGUNO' ? 'CANCELADO' : 'CONFIRMADO',
+                        id: parts[1] || 'ANGEL-0815-N/A',
+                        nombre: parts[2] || 'N/A',
+                        correo: (parts[3] || '').trim().toLowerCase(),
                         acompanantes: parseInt(parts[4]) || 0,
-                        total_pases: (parseInt(parts[4]) || 0) + 1,
                         zona: parts[5] || 'VIP',
                         asiento: parts[6] || 'A-18',
                         mensaje: parts[7] || ''
                     };
                 } else {
-                    // Fallback
+                    // Compatibilidad con QR tipo JSON, pero solo para validar contra Firebase
                     const parsed = JSON.parse(decodedText);
                     qrData = {
                         id: parsed.id || parsed.serial || 'ANGEL-0815-MANUAL',
-                        nombre: parsed.nombre || parsed.invitado || 'N/A',
-                        correo: parsed.correo || parsed.email || 'N/A',
-                        asistencia: parsed.asistencia || (parsed.attendance === 'yes' ? 'CONFIRMADO' : 'CANCELADO'),
+                        nombre: parsed.nombre || parsed.invitado || parsed.name || 'N/A',
+                        correo: (parsed.correo || parsed.email || '').trim().toLowerCase(),
                         acompanantes: parsed.acompanantes !== undefined ? parsed.acompanantes : (parsed.guests || 0),
-                        total_pases: parsed.total_pases || (parsed.asistentes || 1),
                         zona: parsed.zona || 'VIP',
                         asiento: parsed.asiento || parsed.acceso || 'A-18',
                         mensaje: parsed.mensaje || parsed.message || ''
                     };
                 }
-                
-                let matchedGuest = rsvpsDatabase.find(x => x.email.toLowerCase() === qrData.correo.toLowerCase());
-                
-                if (matchedGuest) {
-                    matchedGuest.name = qrData.nombre;
-                    matchedGuest.guests = qrData.acompanantes.toString();
-                    matchedGuest.message = qrData.mensaje;
-                    matchedGuest.tempId = qrData.id;
-                    
-                    activeScanResultGuest = matchedGuest;
-                    openScanResultModal(matchedGuest, "REGISTRADO");
-                } else {
-                    const newGuest = {
-                        name: qrData.nombre,
-                        email: qrData.correo,
-                        attendance: qrData.asistencia === 'CONFIRMADO' ? 'yes' : 'no',
-                        guests: qrData.acompanantes.toString(),
-                        message: qrData.mensaje,
-                        checkIn: false,
-                        tempId: qrData.id
-                    };
-                    activeScanResultGuest = newGuest;
-                    openScanResultModal(newGuest, "NUEVO_REGISTRO_QR");
+
+                if (!qrData.correo || qrData.correo === 'n/a') {
+                    showInvalidQRModal(decodedText);
+                    return;
                 }
+                
+                const matchedGuest = rsvpsDatabase.find(x => (x.email || '').toLowerCase() === qrData.correo);
+                
+                // El escáner NO registra invitados nuevos. Solo admite invitados que ya existen en Firestore.
+                if (!matchedGuest) {
+                    activeScanResultGuest = null;
+                    showUnregisteredQRModal(qrData);
+                    return;
+                }
+
+                matchedGuest.tempId = qrData.id;
+                activeScanResultGuest = matchedGuest;
+                openScanResultModal(matchedGuest, "ADMITIR");
             } catch (e) {
                 console.warn("QR no compatible:", decodedText);
                 playScanErrorSound();
@@ -2162,6 +2121,8 @@
             const icon = document.getElementById('scan-result-icon');
             const badge = document.getElementById('scan-result-badge');
             const actionBtn = document.getElementById('scan-action-btn');
+
+            actionBtn.onclick = toggleGuestCheckInFromModal;
 
             document.getElementById('scan-result-title').innerText = guest.name.toUpperCase();
             document.getElementById('scan-result-email').innerText = guest.email;
@@ -2183,19 +2144,19 @@
                 icon.className = "fa-solid fa-triangle-exclamation";
                 badge.innerText = "PASE DUPLICADO / YA ADMITIDO";
                 badge.className = "font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block bg-amber-500/10 text-amber-400 border border-amber-500/20";
-                
-                actionBtn.innerText = "CANCELAR INGRESO";
-                actionBtn.className = "flex-1 bg-amber-500 hover:bg-amber-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all";
+                actionBtn.innerText = "CERRAR";
+                actionBtn.className = "flex-1 bg-white/10 hover:bg-white/15 text-white font-bold text-xs py-3 px-4 rounded-xl transition-all";
+                actionBtn.onclick = closeScanResultModal;
             } else if (guest.attendance === 'no') {
                 playScanErrorSound();
                 card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-red-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
                 iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-400 bg-red-500/10";
                 icon.className = "fa-solid fa-ban";
-                badge.innerText = "BAJA DE ROSTER (CANCELADO)";
+                badge.innerText = "BAJA DE ROSTER / NO ADMITIR";
                 badge.className = "font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block bg-red-500/10 text-red-400 border border-red-500/20";
-                
-                actionBtn.innerText = "FORZAR INGRESO";
-                actionBtn.className = "flex-1 bg-red-500 hover:bg-red-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all";
+                actionBtn.innerText = "CERRAR";
+                actionBtn.className = "flex-1 bg-white/10 hover:bg-white/15 text-white font-bold text-xs py-3 px-4 rounded-xl transition-all";
+                actionBtn.onclick = closeScanResultModal;
             } else {
                 playScanSuccessSound();
                 card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-emerald-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
@@ -2203,8 +2164,7 @@
                 icon.className = "fa-solid fa-circle-check";
                 badge.innerText = "PASE VIP VÁLIDO";
                 badge.className = "font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                
-                actionBtn.innerText = "REGISTRAR ENTRADA";
+                actionBtn.innerText = "ADMITIR INVITADO";
                 actionBtn.className = "flex-1 bg-emerald-500 hover:bg-emerald-600 text-black font-athletic font-extrabold text-xs py-3 px-4 rounded-xl transition-all";
             }
 
@@ -2221,17 +2181,58 @@
         async function toggleGuestCheckInFromModal() {
             if (!activeScanResultGuest) return;
 
-            activeScanResultGuest.checkIn = !activeScanResultGuest.checkIn;
-            if (activeScanResultGuest.checkIn) {
-                playScanSuccessSound();
+            if (activeScanResultGuest.attendance !== 'yes') {
+                playScanErrorSound();
+                closeScanResultModal();
+                return;
             }
+
+            if (activeScanResultGuest.checkIn === true) {
+                playScanErrorSound();
+                closeScanResultModal();
+                return;
+            }
+
+            activeScanResultGuest.checkIn = true;
+            activeScanResultGuest.checkInAt = Date.now();
+            playScanSuccessSound();
             
             try {
                 await saveRSVPToCloud(activeScanResultGuest);
                 closeScanResultModal();
             } catch (error) {
-                alert("No se pudo registrar la entrada en Firebase.");
+                activeScanResultGuest.checkIn = false;
+                alert("No se pudo admitir al invitado en Firebase.");
             }
+        }
+
+        function showUnregisteredQRModal(qrData) {
+            const modal = document.getElementById('scan-result-modal');
+            const card = document.getElementById('scan-result-card');
+            const iconContainer = document.getElementById('scan-result-icon-container');
+            const icon = document.getElementById('scan-result-icon');
+            const badge = document.getElementById('scan-result-badge');
+            const actionBtn = document.getElementById('scan-action-btn');
+
+            playScanErrorSound();
+            document.getElementById('scan-result-title').innerText = "NO REGISTRADO";
+            document.getElementById('scan-result-email').innerText = qrData.correo || "Correo no disponible";
+            document.getElementById('scan-result-id').innerText = qrData.id || "N/A";
+            document.getElementById('scan-result-guests').innerText = qrData.acompanantes || "0";
+            document.getElementById('scan-result-zone').innerText = "SIN VALIDAR";
+            document.getElementById('scan-result-seat').innerText = "SIN ACCESO";
+            document.getElementById('scan-result-message').innerText = "Este QR no existe en la lista de Firebase. El escáner solo admite invitados previamente registrados.";
+
+            card.className = "w-full max-w-sm rounded-[32px] p-6 text-center border border-red-500/30 bg-[#0c0d15] transition-all scale-100 opacity-100 duration-300";
+            iconContainer.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 bg-red-500/10";
+            icon.className = "fa-solid fa-user-slash";
+            badge.innerText = "INVITADO NO ENCONTRADO";
+            badge.className = "font-athletic text-[9px] font-black tracking-widest uppercase px-3 py-1 rounded-full mb-2 inline-block bg-red-500/10 text-red-500 border border-red-500/20";
+            actionBtn.innerText = "CERRAR";
+            actionBtn.className = "flex-1 bg-white/10 hover:bg-white/15 text-white font-bold text-xs py-3 px-4 rounded-xl transition-all";
+            actionBtn.onclick = closeScanResultModal;
+
+            modal.classList.remove('hidden');
         }
 
         // Modal de QR inválido
@@ -2642,7 +2643,6 @@
         window.switchHostTab = switchHostTab;
         window.closeHostPanel = closeHostPanel;
         window.addManualGuest = addManualGuest;
-        window.loadDemoRSVPs = loadDemoRSVPs;
         window.filterRoster = filterRoster;
         window.toggleGuestCheckIn = toggleGuestCheckIn;
         window.deleteGuestFromRoster = deleteGuestFromRoster;
