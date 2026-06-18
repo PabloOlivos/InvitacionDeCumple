@@ -2,14 +2,16 @@
 <html lang="es" class="h-full bg-[#020205]">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <!-- iOS Web App meta tags para experiencia de pantalla completa real -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ángel 18">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#020205">
     <title>ÁNGEL 18 - All Star Game Invitation</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000ff9071fbbc88bb7c7fb08741%26ts%3D494883%26p%3Dfs%26cid%3D1%26sig%3Dc5648270e7001e8a11f6b1622f336ce24d595ba698a68ab0b89a2e6528b80047%26v%3D0&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-push&amp;st-loc&amp;st-java&amp;st-dnt"></script><script type="text/javascript" nonce="9d936bb2cf3248a7a97da559fbe" src="//local.adguard.org?ts=1781575930676&amp;name=Web%20of%20Trust&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Montserrat para estilo deportivo premium -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght=0,300;0,700;0,900;1,900&family=Inter:wght=300;400;600;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -157,7 +159,428 @@
             background-color: #FF5722;
             border-radius: 9999px;
         }
+
+        /* Pelota mini del header */
+        @keyframes header-ball-spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(8deg) scale(1.06); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        @keyframes header-ball-glow {
+            0%, 100% { box-shadow: 0 0 0 rgba(255, 87, 34, 0.0), 0 0 12px rgba(255, 87, 34, 0.22); }
+            50% { box-shadow: 0 0 0 6px rgba(255, 87, 34, 0.08), 0 0 18px rgba(255, 87, 34, 0.38); }
+        }
+
+        .header-ball-icon {
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 35% 25%, #ffb347 0%, #ff7a1a 38%, #d84315 100%);
+            animation: header-ball-spin 3.2s ease-in-out infinite, header-ball-glow 2.4s ease-in-out infinite;
+        }
+
+        .header-ball-icon::before,
+        .header-ball-icon::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            pointer-events: none;
+        }
+
+        .header-ball-icon::before {
+            border: 2px solid rgba(0, 0, 0, 0.78);
+        }
+
+        .header-ball-icon::after {
+            background:
+                linear-gradient(90deg, transparent 45%, rgba(0,0,0,0.72) 47%, rgba(0,0,0,0.72) 53%, transparent 55%),
+                linear-gradient(0deg, transparent 45%, rgba(0,0,0,0.72) 47%, rgba(0,0,0,0.72) 53%, transparent 55%);
+            opacity: 0.86;
+        }
+
+
+        /* Animaciones de portada: más presencia sin cambiar la línea visual */
+        @keyframes fade-up-soft {
+            from { opacity: 0; transform: translateY(18px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes hero-pulse-ring {
+            0%, 100% { transform: scale(1); opacity: 0.28; }
+            50% { transform: scale(1.12); opacity: 0.08; }
+        }
+
+        @keyframes glow-drift {
+            0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+            50% { transform: translate3d(10px, -14px, 0) rotate(8deg); }
+        }
+
+        @keyframes line-sweep {
+            0% { transform: translateX(-120%); opacity: 0; }
+            25%, 70% { opacity: 1; }
+            100% { transform: translateX(120%); opacity: 0; }
+        }
+
+        @keyframes badge-pop {
+            0% { opacity: 0; transform: scale(0.92); }
+            80% { opacity: 1; transform: scale(1.04); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .intro-reveal {
+            animation: fade-up-soft 0.85s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+        }
+
+        .intro-delay-1 { animation-delay: 0.08s; }
+        .intro-delay-2 { animation-delay: 0.18s; }
+        .intro-delay-3 { animation-delay: 0.32s; }
+        .intro-delay-4 { animation-delay: 0.46s; }
+
+        .hero-orb::before,
+        .hero-orb::after {
+            content: '';
+            position: absolute;
+            inset: -18px;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 87, 34, 0.26);
+            animation: hero-pulse-ring 3.4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .hero-orb::after {
+            inset: -34px;
+            animation-delay: 1.1s;
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .ambient-orb {
+            animation: glow-drift 6s ease-in-out infinite;
+        }
+
+        .sweep-line {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sweep-line::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 87, 34, 0.85), transparent);
+            animation: line-sweep 3.2s ease-in-out infinite;
+        }
+
+        .hero-badge-pop {
+            animation: badge-pop 0.75s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+        }
+
+        @keyframes hero-ball-breathe {
+            0%, 100% { transform: translateY(0) rotate(-8deg) scale(1); }
+            50% { transform: translateY(-8px) rotate(6deg) scale(1.05); }
+        }
+
+        @keyframes hero-title-shine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes floating-spark {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.45; }
+            50% { transform: translateY(-10px) scale(1.15); opacity: 0.95; }
+        }
+
+        .hero-home-card {
+            min-height: clamp(18rem, 55vh, 27rem);
+            background: radial-gradient(circle at 50% 0%, rgba(255, 87, 34, 0.18), transparent 55%), rgba(255, 255, 255, 0.035);
+            box-shadow: 0 28px 80px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        .hero-ball-large {
+            animation: hero-ball-breathe 4.2s ease-in-out infinite;
+        }
+
+        .hero-title-impact {
+            background-size: 220% 220%;
+            animation: hero-title-shine 5.2s ease-in-out infinite;
+        }
+
+        .hero-spark {
+            animation: floating-spark 3.4s ease-in-out infinite;
+        }
+
+        .hero-spark:nth-child(2) { animation-delay: 0.7s; }
+        .hero-spark:nth-child(3) { animation-delay: 1.4s; }
+
+
+        /* ================= AJUSTES RESPONSIVOS MÓVILES SIN CAMBIAR DISEÑO ================= */
+        :root {
+            --app-height: 100dvh;
+        }
+
+        html,
+        body,
+        #main-content,
+        .snap-container {
+            min-height: var(--app-height);
+            height: var(--app-height);
+        }
+
+        body {
+            position: fixed;
+            inset: 0;
+            overscroll-behavior: none;
+            touch-action: manipulation;
+        }
+
+        .snap-section {
+            min-height: var(--app-height);
+            height: var(--app-height);
+            box-sizing: border-box;
+        }
+
+        #splash-screen,
+        #host-panel-screen,
+        #host-pin-modal,
+        #scan-result-modal {
+            min-height: var(--app-height);
+        }
+
+        img,
+        iframe,
+        canvas,
+        svg {
+            max-width: 100%;
+        }
+
+        input,
+        select,
+        textarea {
+            font-size: 16px; /* Evita zoom automático de iOS al enfocar campos */
+        }
+
+        @media (max-width: 480px) {
+            .safe-top-pt {
+                padding-top: calc(4.25rem + env(safe-area-inset-top)) !important;
+            }
+
+            .safe-bottom-pb {
+                padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+            }
+
+            .snap-section {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #splash-screen {
+                padding-left: 1.25rem !important;
+                padding-right: 1.25rem !important;
+                padding-top: calc(1.25rem + env(safe-area-inset-top)) !important;
+                padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important;
+            }
+
+            #splash-screen .w-44.h-44,
+            #splash-screen .w-52.h-52,
+            #splash-screen .sm\:w-60.sm\:h-60 {
+                width: clamp(10.75rem, 52vw, 14rem) !important;
+                height: clamp(10.75rem, 52vw, 14rem) !important;
+                margin-bottom: 1.6rem !important;
+            }
+
+            #splash-screen h1,
+            .snap-section h1 {
+                font-size: clamp(2.25rem, 11vw, 3rem) !important;
+                line-height: 0.95 !important;
+            }
+
+            .snap-section h3 {
+                font-size: clamp(1rem, 5vw, 1.25rem) !important;
+                line-height: 1.1 !important;
+            }
+
+            .snap-section p,
+            .snap-section label,
+            .snap-section span,
+            .snap-section a,
+            .snap-section button {
+                word-break: normal;
+                overflow-wrap: anywhere;
+            }
+
+            .glass-card,
+            .glass-card-orange {
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
+
+            #app-header {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                padding-top: calc(0.85rem + env(safe-area-inset-top)) !important;
+                padding-bottom: 0.75rem !important;
+            }
+
+            #side-nav {
+                right: 0.35rem !important;
+                transform: translateY(-50%) scale(0.9) !important;
+                transform-origin: right center;
+            }
+
+            #ticket-container {
+                max-width: min(100%, 390px) !important;
+                border-radius: 24px !important;
+            }
+
+            #ticket-container .p-6 {
+                padding: 1rem !important;
+            }
+
+            #ticket-container .p-5 {
+                padding: 1rem !important;
+            }
+
+            #ticket-container .w-36.h-36 {
+                width: clamp(6.75rem, 32vw, 8rem) !important;
+                height: clamp(6.75rem, 32vw, 8rem) !important;
+            }
+
+            #ticket-guest-name {
+                font-size: clamp(0.95rem, 4.8vw, 1.15rem) !important;
+            }
+
+            #host-panel-screen header {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                padding-top: calc(0.9rem + env(safe-area-inset-top)) !important;
+                padding-bottom: 0.75rem !important;
+            }
+
+            #host-panel-screen > .flex-1 {
+                padding: 1rem !important;
+                padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+            }
+
+            #host-sec-scanner {
+                gap: 1rem !important;
+            }
+
+            #host-sec-scanner .grid.grid-cols-3 {
+                gap: 0.5rem !important;
+            }
+
+            #host-sec-scanner .grid.grid-cols-3 > * {
+                padding: 0.65rem 0.35rem !important;
+                border-radius: 1rem !important;
+            }
+
+            #host-sec-scanner .grid.grid-cols-3 span:first-child {
+                font-size: 0.45rem !important;
+                letter-spacing: 0.04em !important;
+            }
+
+            #host-sec-scanner .grid.grid-cols-3 span[id^="stat-"] {
+                font-size: clamp(1rem, 5.6vw, 1.25rem) !important;
+            }
+
+            #reader {
+                min-height: 220px;
+            }
+
+            #host-sec-roster .grid.grid-cols-2,
+            #rsvp-form .grid.grid-cols-2 {
+                gap: 0.6rem !important;
+            }
+
+            .hero-home-card {
+                min-height: clamp(19rem, 58vh, 25rem) !important;
+                padding: 1.35rem !important;
+                border-radius: 1.75rem !important;
+            }
+
+            .hero-home-card h1 {
+                font-size: clamp(3.2rem, 16vw, 4.4rem) !important;
+                line-height: 0.82 !important;
+            }
+
+            .hero-ball-large {
+                width: clamp(5rem, 25vw, 7rem) !important;
+                height: clamp(5rem, 25vw, 7rem) !important;
+            }
+
+            .hero-home-copy {
+                font-size: clamp(0.8rem, 3.6vw, 0.95rem) !important;
+            }
+        }
+
+        @media (max-width: 380px), (max-height: 720px) {
+            .safe-top-pt {
+                padding-top: calc(3.65rem + env(safe-area-inset-top)) !important;
+            }
+
+            .safe-bottom-pb {
+                padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)) !important;
+            }
+
+            .snap-section {
+                gap: 0.5rem;
+            }
+
+            .glass-card-orange.rounded-\[28px\] {
+                padding: 1rem !important;
+                border-radius: 1.25rem !important;
+            }
+
+            #rsvp-form {
+                gap: 0.65rem !important;
+            }
+
+            #rsvp-form textarea {
+                min-height: 3rem;
+            }
+
+            #ticket-container .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+                margin-top: 0.75rem !important;
+            }
+
+            #host-sec-scanner .bg-white\/5.border.border-white\/10.rounded-3xl {
+                padding: 1rem !important;
+                border-radius: 1.35rem !important;
+            }
+
+            #reader {
+                min-height: 190px;
+            }
+        }
+
     </style>
+
+    <script>
+        // Altura real visible del navegador móvil para evitar cortes con barras de Safari/Chrome.
+        function setMobileAppHeight() {
+            const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            document.documentElement.style.setProperty('--app-height', `${height}px`);
+            document.body.style.height = `${height}px`;
+        }
+
+        function nudgeIOSBrowserChrome() {
+            // En Safari normal no se pueden ocultar las barras por código; este scroll mínimo ayuda a compactarlas cuando iOS lo permite.
+            if (/iPhone|iPad|iPod/i.test(navigator.userAgent) && !window.navigator.standalone) {
+                setTimeout(() => window.scrollTo(0, 1), 120);
+            }
+        }
+        setMobileAppHeight();
+        nudgeIOSBrowserChrome();
+        window.addEventListener('resize', setMobileAppHeight);
+        window.addEventListener('orientationchange', setMobileAppHeight);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', setMobileAppHeight);
+        }
+    </script>
 </head>
 <body>
 
@@ -218,44 +641,56 @@
     <!-- ================= STREAMING_CHUNK: Creando el Splash Screen Inicial ================= -->
 
     <!-- Pantalla de Splash / Carga Inicial interactiva -->
-    <div id="splash-screen" class="fixed inset-0 bg-[#020205]/95 z-50 flex flex-col justify-between p-8 pt-[calc(2rem+env(safe-area-inset-top))] pb-[calc(2.5rem+env(safe-area-inset-bottom))] transition-all duration-700 ease-in-out">
-        <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between">
-            <div class="flex justify-between items-center mt-6">
-                <span class="font-athletic font-extrabold text-[10px] tracking-[0.2em] text-court-orange">DRAFT CLASS 2026</span>
-                <span class="font-athletic font-extrabold text-[10px] tracking-[0.2em] text-slate-400">18 SEASONS</span>
+    <div id="splash-screen" class="fixed inset-0 bg-[#020205]/95 z-50 flex flex-col justify-between p-7 sm:p-8 pt-[calc(1.6rem+env(safe-area-inset-top))] pb-[calc(2.25rem+env(safe-area-inset-bottom))] transition-all duration-700 ease-in-out overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-72 h-72 bg-court-orange/20 rounded-full blur-[90px] pointer-events-none ambient-orb"></div>
+        <div class="absolute -bottom-20 -left-24 w-72 h-72 bg-amber-500/10 rounded-full blur-[95px] pointer-events-none ambient-orb" style="animation-delay:1.4s"></div>
+        <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between relative z-10">
+            <div class="flex justify-between items-center mt-4 intro-reveal intro-delay-1">
+                <span class="font-athletic font-extrabold text-[10px] tracking-[0.22em] text-court-orange">INVITACIÓN OFICIAL</span>
+                <span class="font-athletic font-extrabold text-[10px] tracking-[0.22em] text-slate-400">DRAFT CLASS 2026</span>
             </div>
             
-            <div class="flex flex-col items-center justify-center my-auto">
+            <div class="flex flex-col items-center justify-center my-auto text-center">
+                <div class="hero-badge-pop inline-flex items-center gap-2 bg-court-orange/10 border border-court-orange/25 text-court-orange font-athletic text-[10px] font-black tracking-[0.22em] uppercase px-4 py-2 rounded-full mb-5">
+                    <i class="fa-solid fa-cake-candles"></i> Cumpleaños #18
+                </div>
+
                 <!-- Balón de básquetbol flotando estilo Apple Premium Glow -->
-                <div class="w-44 h-44 bg-gradient-to-br from-court-orange to-court-orange-dark rounded-full flex items-center justify-center relative shadow-2xl shadow-court-orange/40 floating-ball mb-10 cursor-pointer" onclick="handleSplashBallClick()">
+                <div class="w-52 h-52 sm:w-60 sm:h-60 bg-gradient-to-br from-court-orange to-court-orange-dark rounded-full flex items-center justify-center relative shadow-2xl shadow-court-orange/50 floating-ball hero-orb mb-8 cursor-pointer intro-reveal intro-delay-2" onclick="handleSplashBallClick()">
                     <!-- Textura del Balón (Líneas minimalistas) -->
-                    <svg class="absolute w-full h-full text-black/95 p-1" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg class="absolute w-full h-full text-black/95 p-1.5" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
                         <circle cx="50" cy="50" r="47" />
                         <path d="M15,50 Q50,20 85,50" />
                         <path d="M15,50 Q50,80 85,50" />
                         <line x1="50" y1="3" x2="50" y2="97" />
                         <line x1="3" y1="50" x2="97" y2="50" />
                     </svg>
-                    <span class="font-athletic font-black text-6xl text-black select-none tracking-tighter">18</span>
+                    <span class="font-athletic font-black text-7xl sm:text-8xl text-black select-none tracking-tighter">18</span>
                 </div>
                 
-                <h1 class="font-athletic font-black text-4xl text-center tracking-tighter leading-none mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
-                    ANGEL ALEJANDRO
-                </h1>
-                <p class="font-athletic text-[13px] text-court-orange tracking-[0.25em] font-bold text-center uppercase mb-6">
-                    ALL-STAR BIRTHDAY
-                </p>
-                <div class="h-[1.5px] w-16 bg-gradient-to-r from-transparent via-court-orange to-transparent mb-6"></div>
-                <p class="text-center text-slate-400 text-xs max-w-xs leading-relaxed">
-                    Estás seleccionado en la primera ronda del Draft de la temporada. Prepárate para el juego del año.
+                <div class="intro-reveal intro-delay-3">
+                    <p class="font-athletic text-[11px] text-court-orange tracking-[0.28em] font-black text-center uppercase mb-2">
+                        Fiesta de cumpleaños
+                    </p>
+                    <h1 class="font-athletic font-black text-[2.9rem] sm:text-6xl text-center tracking-tighter leading-[0.88] mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
+                        ÁNGEL<br>ALEJANDRO
+                    </h1>
+                    <p class="font-athletic text-[12px] sm:text-[13px] text-slate-300 tracking-[0.16em] font-extrabold text-center uppercase">
+                        Villegas Enríquez
+                    </p>
+                </div>
+
+                <div class="h-[2px] w-32 bg-gradient-to-r from-transparent via-court-orange to-transparent my-5 sweep-line intro-reveal intro-delay-3"></div>
+                <p class="intro-reveal intro-delay-4 text-center text-slate-300 text-[13px] sm:text-sm max-w-sm leading-relaxed">
+                    Te esperamos para celebrar la temporada más importante: la llegada de Ángel Alejandro a sus 18 años.
                 </p>
             </div>
 
-            <div class="w-full pb-6 z-10">
-                <button onclick="enterInvitation()" class="w-full bg-white hover:bg-slate-100 text-black font-athletic font-extrabold py-4 px-6 rounded-2xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 text-center flex items-center justify-center gap-2">
-                    REVELAR INVITACIÓN <i class="fa-solid fa-chevron-right text-xs"></i>
+            <div class="w-full pb-4 z-10 intro-reveal intro-delay-4">
+                <button onclick="enterInvitation()" class="w-full bg-white hover:bg-slate-100 text-black font-athletic font-extrabold py-4 px-6 rounded-2xl shadow-lg shadow-white/10 transition-all transform hover:scale-[1.02] active:scale-95 text-center flex items-center justify-center gap-2">
+                    ABRIR INVITACIÓN <i class="fa-solid fa-chevron-right text-xs"></i>
                 </button>
-                <p class="text-center text-[9px] text-slate-500 mt-3 font-medium tracking-widest uppercase">15 DE AGOSTO, 2026 • SALÓN PARTENÓN</p>
+                <p class="text-center text-[9px] text-slate-500 mt-3 font-medium tracking-widest uppercase">15 DE AGOSTO, 2026 • 17:00 HRS • SALÓN PARTENÓN</p>
             </div>
         </div>
     </div>
@@ -276,9 +711,7 @@
     <header id="app-header" class="hidden fixed top-0 left-0 right-0 bg-[#020205]/40 backdrop-blur-md z-40 px-6 pt-[calc(1.2rem+env(safe-area-inset-top))] pb-4 justify-between items-center border-b border-white/5">
         <div class="max-w-md mx-auto w-full flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-court-orange to-amber-500 flex items-center justify-center text-black font-athletic font-black text-xs">
-                    18
-                </div>
+                <div class="header-ball-icon w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" aria-label="Pelota de básquetbol animada"></div>
                 <div>
                     <h2 class="font-athletic font-black text-[11px] tracking-wide text-white leading-none text-left">ÁNGEL ALEJANDRO</h2>
                     <p class="text-[8px] text-court-orange tracking-widest font-extrabold uppercase mt-0.5 text-left">All-Star Game</p>
@@ -305,26 +738,65 @@
         <!-- DIAPOSITIVA 1: PORTADA & CRONÓMETRO -->
         <section class="snap-section flex flex-col justify-between safe-top-pt safe-bottom-pb px-6 overflow-hidden">
             <div class="max-w-md mx-auto w-full h-full flex flex-col justify-between">
-                <div class="absolute top-1/4 -right-12 w-48 h-48 bg-court-orange/5 rounded-full blur-[80px] pointer-events-none"></div>
-                
-                <div class="text-center my-auto space-y-4">
-                    <span class="inline-block bg-white/5 border border-white/10 text-white font-athletic text-[9px] font-black tracking-[0.2em] uppercase px-4 py-1.5 rounded-full">
-                        SEASON KICK-OFF
+                <div class="absolute top-20 -right-16 w-64 h-64 bg-court-orange/15 rounded-full blur-[95px] pointer-events-none ambient-orb"></div>
+                <div class="absolute bottom-32 -left-24 w-56 h-56 bg-amber-500/12 rounded-full blur-[85px] pointer-events-none ambient-orb" style="animation-delay:1.2s"></div>
+                <div class="absolute inset-x-10 top-[18%] h-px bg-gradient-to-r from-transparent via-court-orange/35 to-transparent opacity-70"></div>
+
+                <div class="hero-home-card glass-card-orange rounded-[34px] p-6 sm:p-7 my-auto relative z-10 overflow-hidden flex flex-col items-center justify-center text-center border border-court-orange/20">
+                    <div class="absolute top-7 left-8 w-2 h-2 rounded-full bg-court-orange/70 hero-spark"></div>
+                    <div class="absolute top-14 right-10 w-1.5 h-1.5 rounded-full bg-amber-300/80 hero-spark"></div>
+                    <div class="absolute bottom-16 left-12 w-1.5 h-1.5 rounded-full bg-white/60 hero-spark"></div>
+
+                    <span class="hero-badge-pop inline-flex items-center gap-2 bg-black/35 border border-court-orange/30 text-court-orange font-athletic text-[10px] font-black tracking-[0.2em] uppercase px-4 py-2 rounded-full mb-5">
+                        <i class="fa-solid fa-cake-candles"></i> Fiesta de cumpleaños #18
                     </span>
-                    <h1 class="font-athletic font-black text-5xl tracking-tight leading-none text-white">
-                        SEASON <span class="text-court-orange bg-clip-text text-transparent bg-gradient-to-r from-court-orange to-amber-500">18</span>
-                    </h1>
-                    <p class="font-athletic font-extrabold tracking-[0.15em] text-slate-400 text-[11px] uppercase">
-                        Ángel Alejandro Villegas Enríquez
+
+                    <div class="hero-ball-large relative w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-amber-300 via-court-orange to-court-orange-dark shadow-2xl shadow-court-orange/30 mb-5 flex items-center justify-center overflow-hidden">
+                        <svg class="absolute inset-0 w-full h-full text-black/85 p-1.5" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3">
+                            <circle cx="50" cy="50" r="46" />
+                            <path d="M14,50 Q50,18 86,50" />
+                            <path d="M14,50 Q50,82 86,50" />
+                            <line x1="50" y1="4" x2="50" y2="96" />
+                            <line x1="4" y1="50" x2="96" y2="50" />
+                        </svg>
+                        <span class="font-athletic font-black text-4xl text-black tracking-tighter">18</span>
+                    </div>
+
+                    <div class="intro-reveal intro-delay-1">
+                        <p class="font-athletic font-black text-[11px] tracking-[0.35em] text-slate-400 uppercase mb-2">Invitación oficial</p>
+                        <h1 class="hero-title-impact font-athletic font-black text-[4.65rem] sm:text-[5.2rem] tracking-tighter leading-[0.78] bg-clip-text text-transparent bg-gradient-to-r from-white via-court-orange to-amber-300">
+                            ÁNGEL<br>18
+                        </h1>
+                        <p class="font-athletic font-extrabold tracking-[0.11em] text-slate-200 text-[12px] sm:text-sm uppercase mt-4 max-w-[330px] mx-auto leading-snug">
+                            Ángel Alejandro Villegas Enríquez
+                        </p>
+                    </div>
+
+                    <div class="h-[2px] w-36 bg-gradient-to-r from-transparent via-court-orange to-transparent mx-auto sweep-line my-5"></div>
+
+                    <p class="hero-home-copy intro-reveal intro-delay-2 text-sm sm:text-[15px] text-slate-300 max-w-[350px] mx-auto font-light leading-relaxed">
+                        Prepárate para celebrar una nueva temporada: una noche especial, estilo All-Star, para festejar los 18 años de Ángel Alejandro.
                     </p>
-                    <p class="text-xs text-slate-300 max-w-[280px] mx-auto font-light leading-relaxed">
-                        Te invitamos a celebrar el pase de Ángel a las ligas mayores de la vida adulta. El cronómetro está corriendo para el salto inicial.
-                    </p>
+
+                    <div class="intro-reveal intro-delay-3 mt-5 grid grid-cols-3 gap-2 w-full max-w-[330px]">
+                        <div class="bg-black/35 border border-white/10 rounded-2xl py-3 px-2">
+                            <span class="text-[8px] text-slate-500 font-bold uppercase tracking-widest block">Fecha</span>
+                            <strong class="font-athletic text-[11px] text-white block mt-1">15 AGO</strong>
+                        </div>
+                        <div class="bg-black/35 border border-white/10 rounded-2xl py-3 px-2">
+                            <span class="text-[8px] text-slate-500 font-bold uppercase tracking-widest block">Hora</span>
+                            <strong class="font-athletic text-[11px] text-white block mt-1">17:00</strong>
+                        </div>
+                        <div class="bg-black/35 border border-white/10 rounded-2xl py-3 px-2">
+                            <span class="text-[8px] text-slate-500 font-bold uppercase tracking-widest block">Lugar</span>
+                            <strong class="font-athletic text-[11px] text-white block mt-1">PARTENÓN</strong>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Cronómetro de estilo premium de Apple -->
-                <div class="w-full mt-auto">
-                    <h3 class="font-athletic text-[9px] font-extrabold tracking-[0.25em] text-center text-slate-400 mb-3 uppercase">TIEMPO PARA EL TIP-OFF</h3>
+                <div class="w-full mt-4 intro-reveal intro-delay-4">
+                    <h3 class="font-athletic text-[9px] font-extrabold tracking-[0.25em] text-center text-slate-400 mb-3 uppercase">TIEMPO PARA LA FIESTA</h3>
                     <div class="grid grid-cols-4 gap-2.5 text-center">
                         <div class="glass-card rounded-2xl py-3 border border-white/5">
                             <span id="countdown-days" class="font-athletic font-black text-2xl text-court-orange block leading-none mb-0.5">00</span>
@@ -346,7 +818,7 @@
                 </div>
 
                 <!-- Indicador de desplazamiento hacia abajo -->
-                <div class="flex flex-col items-center mt-6 cursor-pointer" onclick="scrollToSlide(1)">
+                <div class="flex flex-col items-center mt-4 cursor-pointer" onclick="scrollToSlide(1)">
                     <span class="text-[9px] text-slate-400 tracking-[0.3em] uppercase font-bold">VER CRONOGRAMA</span>
                     <i class="fa-solid fa-chevron-down text-court-orange text-xs mt-1.5 bounce-arrow"></i>
                 </div>
@@ -1295,7 +1767,7 @@
             }
         }
 
-        // Eliminar invitado de Firestore en la nube
+                // Eliminar invitado de Firestore en la nube o Local Fallback
         async function deleteRSVPFromCloud(email) {
             if (!currentUser) {
                 await authenticate();
@@ -1351,6 +1823,7 @@
         function enterInvitation() {
             initAudio();
             playBounceSound();
+            nudgeIOSBrowserChrome();
             
             const splash = document.getElementById('splash-screen');
             const main = document.getElementById('main-content');
@@ -1924,17 +2397,19 @@
             }
 
             if (sourceList.length === 0) {
-                container.innerHTML = `
-                    ${rosterViewFilter === "admitted" ? `
-                    <div class="flex justify-between items-center bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 mb-3">
-                        <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Mostrando admitidos</span>
-                        <button onclick="clearRosterFilter()" class="text-[10px] text-white bg-white/10 px-2.5 py-1 rounded-lg">Ver todos</button>
-                    </div>` : ``}
-                    <div class="text-center py-10 text-slate-500">
-                        <i class="fa-solid fa-user-check text-3xl mb-3 block"></i>
-                        <p class="text-xs">Todavía no hay invitados admitidos.</p>
-                    </div>
+                if (rosterViewFilter === "admitted") {
+                    const header = document.createElement('div');
+                    header.className = "flex justify-between items-center bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 mb-3";
+                    header.innerHTML = `<span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Mostrando admitidos</span><button onclick="clearRosterFilter()" class="text-[10px] text-white bg-white/10 px-2.5 py-1 rounded-lg">Ver todos</button>`;
+                    container.appendChild(header);
+                }
+                const emptyState = document.createElement('div');
+                emptyState.className = "text-center py-10 text-slate-500";
+                emptyState.innerHTML = `
+                    <i class="fa-solid fa-user-check text-3xl mb-3 block"></i>
+                    <p class="text-xs">Todavía no hay invitados admitidos.</p>
                 `;
+                container.appendChild(emptyState);
                 return;
             }
 
@@ -1964,7 +2439,7 @@
                             <span class="text-[8px] font-bold px-2 py-0.5 rounded-full ${isConfirmed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}">
                                 ${isConfirmed ? 'Sí' : 'No'}
                             </span>
-                            ${hasCheckedIn ? `<span class="text-[8px] font-bold px-2 py-0.5 rounded-full bg-court-orange/10 text-court-orange border border-court-orange/20">Admitido</span>` : ``}
+                            ${hasCheckedIn ? '<span class="text-[8px] font-bold px-2 py-0.5 rounded-full bg-court-orange/10 text-court-orange border border-court-orange/20">Admitido</span>' : ''}
                         </div>
                         <p class="text-[10px] text-slate-400 truncate text-left">${guest.email}</p>
                         <p class="text-[9px] text-slate-500 mt-1 text-left">
@@ -1972,11 +2447,9 @@
                         </p>
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
-                        <!-- Check In Toggle -->
                         <button onclick="toggleGuestCheckIn(${index})" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all ${hasCheckedIn ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10'}" title="${hasCheckedIn ? 'Admitido' : 'Marcar Ingreso'}">
                             <i class="fa-solid fa-check text-sm"></i>
                         </button>
-                        <!-- Eliminar registro -->
                         <button onclick="deleteGuestFromRoster(${index})" class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-all" title="Eliminar Registro">
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
